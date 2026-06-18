@@ -1,0 +1,125 @@
+﻿Output Systems: Intelligent Chat System Demo Series
+Compiled Context Document
+
+What We Are Building
+Output Systems is building a series of live, publicly accessible intelligent chat system demos. Each demo is built for a specific industry vertical and hosted on output.systems. These demos are used as prospecting tools. When we reach out to a potential client, we send them a link to the demo that is relevant to their industry. They can interact with a working example of exactly what Output Systems would build for their business.
+
+Each demo is not a generic chatbot. It is an intelligent chat system that does three things: answers questions with genuine depth, collects visitor information at the right moment, and routes the visitor toward a next action. This mirrors exactly what Output Systems builds for paying clients.
+
+The first demo is built for injury lawyers. Future demos will be built for mortgage brokers, immigration lawyers, and additional verticals as the business grows.
+
+Why We Are Building It
+Outreach without proof is a hard sell. When we approach a business and tell them we build intelligent chat systems, the fastest way to close that conversation is to show them one. Not a screenshot. Not a slide deck. A live system they can use right now, built for their exact industry, answering the kinds of questions their own clients would ask.
+
+The demo also serves a second purpose. It shows the prospect both sides of what Output Systems delivers: what their clients would experience, and what the business gets back from those interactions. This mirrors our two-output model in a way that no description or sales pitch can.
+
+How the Demo Works
+When a prospect lands on the demo, they are immediately given a choice. They can experience the system as a client, meaning they interact with the chat system the way a real potential client of their firm would. Or they can experience it as themselves, meaning the system speaks directly to them as a business owner or professional evaluating what Output Systems offers.
+
+They can switch between both modes freely. This is intentional. The moment a lawyer switches from client mode to lawyer mode and sees the system explain what it just did and why, that is the sales moment.
+
+Mode Selection
+The very first thing a visitor sees is a mode selection prompt. This serves two audiences at the same time: the lawyer evaluating the demo, and a simulated client using the system.
+
+Opening message template:
+"Welcome. You are viewing a demo of an intelligent chat system built for [INDUSTRY]. How would you like to explore this?"
+
+Option A: Experience it as a client — see what your potential clients experience when they land on your website.
+Option B: Experience it as yourself — ask questions about how this system works and what Output Systems would build for you.
+You can switch between both modes at any time.
+
+Client Mode
+In client mode, the system answers general questions about the firm's practice areas, guides the visitor, protects their privacy by keeping the conversation general, and routes them toward booking a consultation or speaking to someone when they are ready. Specifically the system:
+
+Opens with a disclaimer: general information only, no personal details, no case specifics, not legal advice.
+Asks how it can help before pulling any information.
+Answers general questions from the knowledge base covering practice areas, process, timelines, costs, and more.
+Monitors for case-specific or personal information being shared and redirects immediately.
+Triggers intake routing when the visitor signals they want to speak to someone or share their situation.
+
+Lawyer Mode
+In lawyer mode, the system speaks directly to the visiting prospect, explains the Output Systems model, and routes them toward a discovery call with our team. Specifically the system:
+
+Answers questions about the technology and process.
+Shows examples of how the client-mode system would respond to specific questions.
+Explains the two-output model: customer-facing service (Output One) and business-facing intelligence (Output Two).
+Routes the prospect toward booking a discovery call with Curtis.
+
+What Makes It Different From a Chatbot
+A traditional chatbot answers questions. This system answers questions, guides visitors toward action, protects the business from liability by keeping conversations appropriately general, and captures lead information at the right moment. It also feeds everything back to the business as intelligence. Every conversation, every question asked, every point where a visitor decided to reach out or leave, becomes data the business can act on.
+
+That second layer, the business intelligence layer, is Output Two. It is what separates an intelligent customer interaction system from a chatbot, and the demo is designed to show both layers in a single conversation.
+
+Disclaimer and Data Protection
+The disclaimer applies in client mode only. It must appear in the opening message, not buried in a footer. The system actively enforces it throughout the conversation.
+
+Disclaimer template:
+"Before we begin: this chat provides general information only. It is not legal advice and does not create a lawyer-client relationship. Please do not share your name, contact details, or specifics about your incident in this chat. If you would like to discuss your situation privately, we can connect you with [FIRM NAME] directly."
+
+Enforcement rule:
+If a visitor shares anything that reads as a real incident such as dates, locations, names, or injury descriptions, the system stops answering and pivots: "It sounds like you may have a specific situation you would like to discuss. For your privacy and protection, I cannot address case specifics here. Would you like me to connect you with [FIRM NAME] directly?"
+
+Intake and Routing Logic
+At any point in client mode, the system can trigger an intake routing sequence. Triggers include:
+
+Visitor says they want to speak to someone.
+Visitor shares case-specific details.
+Visitor asks about fees, whether they have a case, or next steps.
+
+Routing options:
+Option 1: Collect name and best contact method via a short in-chat form, then confirm a team member will follow up.
+Option 2: Direct the visitor to call the firm at [PHONE NUMBER].
+Option 3: Surface a booking link to schedule a consultation directly.
+
+Knowledge Base Structure
+The knowledge base is stored in Supabase as a vector store. Each entry is a discrete chunk of content such as a question-answer pair, a process explanation, a definition, or a routing script. Claude Code will determine the exact schema. The content is sourced from multiple AI systems and assembled before being embedded.
+
+Content categories for the injury lawyer demo:
+Practice area overviews
+Process and timeline FAQs
+Cost and fee structure FAQs
+Evidence and documentation guidance
+Insurance and opposing party questions
+Compensation and damages FAQs
+Statute of limitations by practice area
+Intake routing scripts
+
+Practice areas covered:
+Car accidents
+Slip and fall
+Workers compensation
+Medical malpractice
+Truck accidents
+Motorcycle accidents
+Wrongful death
+Dog bites
+Product liability
+Pedestrian accidents
+
+The Demo Series
+Every demo in the series follows the same structural template. The content changes. The structure does not. Once the template is built and proven with the injury lawyer demo, every additional vertical is a content and knowledge base swap, not a rebuild. Each demo gets its own subdomain or path on output.systems and its own knowledge base in Supabase.
+
+Planned demos:
+Injury lawyer (first build)
+Mortgage broker
+Immigration lawyer
+Additional verticals to be defined
+
+How the Content Gets Built
+The knowledge base that powers each demo is assembled from multiple AI systems: Claude, Gemini, ChatGPT, and Perplexity. Each system contributes content for the relevant industry. That content is reviewed, organized, and merged into a single structured knowledge base, which is then embedded into Supabase and connected to the chat system.
+
+The goal is a knowledge base deep enough that the system can handle the vast majority of questions a real visitor would ask, and gracefully redirect anything outside its scope toward a direct conversation with the business.
+
+Claude's role in this process:
+Claude assembles and organizes all content. Claude does not just generate a content list. Claude produces the full structured knowledge base document, organized by category and practice area, formatted and ready to hand directly to Claude Code.
+
+What We Are Building Next
+The next step is building the injury lawyer demo from the ground up. This includes assembling the full knowledge base content, building the two-mode chat structure, setting up the demo site on output.systems, and confirming the system works as both a client experience and a sales tool. Once that demo is live and proven, the template gets applied to the next vertical.
+
+Build order:
+Build Track A knowledge base content starting with car accidents.
+Build Track B lawyer-mode script and Output Systems positioning layer.
+Build disclaimer, data protection, and intake routing scripts.
+Hand full assembled document to Claude Code for Supabase embedding and system build.
+Repeat template for mortgage broker and immigration lawyer demos.
+

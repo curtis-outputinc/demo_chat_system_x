@@ -1,0 +1,103 @@
+﻿Output Systems: Intelligent Chat System Demo
+Master Build Document — Series Template
+
+1. What We Are Building
+We are building a series of intelligent chat system demos, each tailored to a specific industry vertical (injury law, mortgage brokerage, immigration law, and others to be defined). Each demo is a live, publicly accessible chat system hosted on output.systems (e.g., output.systems/demo/injury-lawyer). The demos are used as prospecting tools: we send a target prospect the link and they interact with a working example of what we would build for their firm or business.
+
+Each demo is NOT a generic chatbot. It is an intelligent chat system that does three things: answers questions with genuine depth, collects visitor information at the right moment, and routes the visitor toward a next action. This mirrors exactly what Output Systems builds for paying clients.
+
+2. The Template Structure (Transferable Across All Demos)
+Every demo we build, regardless of industry, follows the same structural template. The content changes. The structure does not. This section defines that structure.
+
+2.1 Mode Selection (Opening Screen)
+The very first thing a visitor sees is a mode selection prompt. This serves two audiences at the same time: the lawyer (or broker, or other prospect) evaluating the demo, and a simulated client using the system.
+
+Opening message (template):
+"Welcome. You are viewing a demo of an intelligent chat system built for [INDUSTRY]. How would you like to explore this?"
+
+Option A: Experience it as a client — see what your potential clients experience when they land on your website.
+Option B: Experience it as yourself — ask questions about how this system works and what Output Systems would build for you.
+You can switch between both modes at any time.
+
+2.2 Track A: Client Mode
+The bot behaves as if it is installed on the prospect's website, answering questions that a real potential client would ask. The bot:
+Opens with a disclaimer: general information only, no personal details, no case specifics, not legal advice.
+Asks how it can help before pulling any information.
+Answers general questions from the knowledge base (practice areas, process, timelines, costs, etc.).
+Monitors for case-specific or personal information being shared and redirects immediately.
+Triggers intake routing when the visitor signals they want to speak to someone or share their situation.
+
+2.3 Track B: Lawyer Mode (or Prospect Mode)
+The bot speaks directly to the visiting prospect. It explains what Output Systems builds, how the system works, what the knowledge base contains, and what a deployment for their firm would look like. It can:
+Answer questions about the technology and process.
+Show examples of how the client-mode bot would respond to specific questions.
+Explain the two-output model: customer-facing service (Output One) and business-facing intelligence (Output Two).
+Route the prospect toward booking a discovery call with Curtis.
+
+2.4 Disclaimer and Data Protection Logic
+This applies in Client Mode only. The disclaimer must appear in the opening message, not buried in a footer. The bot actively enforces it during conversation.
+
+Disclaimer text (template):
+"Before we begin: this chat provides general information only. It is not legal advice and does not create a lawyer-client relationship. Please do not share your name, contact details, or specifics about your incident in this chat. If you would like to discuss your situation privately, we can connect you with [FIRM NAME] directly."
+
+Enforcement rule:
+If a visitor shares anything that reads as a real incident (dates, locations, names, injury descriptions), the bot stops answering the content question and pivots: "It sounds like you may have a specific situation you would like to discuss. For your privacy and protection, I cannot address case specifics here. Would you like me to connect you with [FIRM NAME] directly?"
+
+2.5 Intake and Routing Logic
+At any point in Client Mode, the bot can trigger an intake routing sequence. Triggers include:
+Visitor says they want to speak to someone.
+Visitor shares case-specific details.
+Visitor asks about fees, whether they have a case, or next steps.
+
+Routing options (demo version):
+Option 1: Collect name and best contact method via a short in-chat form, then confirm a team member will follow up.
+Option 2: Direct the visitor to call the firm at [PHONE NUMBER].
+Option 3: Surface a booking link to schedule a consultation directly.
+
+3. Knowledge Base Structure
+The knowledge base is stored in Supabase as a vector store. Each entry is a discrete chunk of content (a question-answer pair, a process explanation, a definition, or a routing script). Claude Code will determine the exact schema. The content is sourced from multiple AI systems (Claude, Gemini, ChatGPT, Perplexity) and assembled here before being embedded.
+
+3.1 Content Categories (Injury Lawyer Demo)
+Practice area overviews (what the firm handles and how)
+Process and timeline FAQs (what happens after I call, how long does it take)
+Cost and fee structure FAQs (contingency, no win no fee, what it costs to start)
+Evidence and documentation guidance (what to keep, what to do right after an incident)
+Insurance and opposing party questions (dealing with insurance companies, what not to say)
+Compensation and damages FAQs (what can I recover, how is it calculated)
+Statute of limitations by practice area
+Intake routing scripts (when and how to transition from Q and A to connection)
+
+3.2 Practice Areas Covered (Injury Lawyer Demo)
+Car accidents
+Slip and fall
+Workers compensation
+Medical malpractice
+Truck accidents
+Motorcycle accidents
+Wrongful death
+Dog bites
+Product liability
+Pedestrian accidents
+
+4. Demo Verticals Planned (Series)
+The following demo sites will be built using this same template. Each gets its own subdomain or path on output.systems and its own knowledge base in Supabase.
+
+Injury law (first build — current focus)
+Mortgage brokerage
+Immigration law
+Additional verticals to be defined
+
+5. Content Assembly Process
+Content for each knowledge base is gathered from multiple AI systems: Claude, Gemini, ChatGPT, and Perplexity. Each system contributes a version of the Q and A content for each practice area. The outputs are reviewed, de-duplicated, and merged into a single master content file per vertical. That file is then structured and handed to Claude Code for embedding into Supabase.
+
+Claude's role in this process:
+Claude assembles and organizes all content. Claude does not just generate a content list. Claude produces the full structured knowledge base document, organized by category and practice area, formatted and ready to hand directly to Claude Code.
+
+6. Next Steps
+Confirm practice area list for injury lawyer demo (locked above in 3.2).
+Build Track A knowledge base content starting with car accidents (highest volume practice area).
+Build Track B lawyer-mode script and Output Systems positioning layer.
+Build disclaimer, data protection, and intake routing scripts.
+Hand full assembled document to Claude Code for Supabase embedding and system build.
+Repeat template for mortgage brokerage and immigration law demos.
+

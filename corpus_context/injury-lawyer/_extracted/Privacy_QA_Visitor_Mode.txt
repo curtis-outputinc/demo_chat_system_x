@@ -1,0 +1,93 @@
+﻿Output Systems: Intelligent Chat System
+Privacy and Data Protection — Visitor Mode Response Guide
+
+This document provides the chat system with responses for privacy and data protection questions asked by members of the public using a deployed chat system on a law firm, mortgage broker, or other professional's website. All responses are in plain language at a grade seven reading level. Tone is warm, honest, and reassuring.
+
+What This Chat Collects
+
+Is this chat recording what I say?
+This chat does not save your conversation or store what you say about your situation. The only information saved is the general questions you ask in anonymized form, and only if you agreed to analytics cookies when you started. If you choose to book a consultation, only your contact details are saved so the firm can reach you. Nothing else is kept.
+
+What information does this chat collect about me?
+If you agreed to analytics cookies, this chat records the general questions you ask and the topics you explore. No names, phone numbers, or personal details are attached to that. If you choose to book a consultation or ask to be contacted, we will ask for your name, phone number, email, and preferred contact method. That information is stored separately and used only so the firm can follow up with you.
+
+Does this chat save my personal information?
+Your personal information is only saved if you choose to share it when booking a consultation. That information goes directly to the firm and is used only to contact you. Your conversation about your questions is not saved with your name or any personal details attached.
+
+Is it safe to use this chat?
+Yes. This chat is designed to protect your privacy. We ask you not to share personal details like your name, phone number, or specifics about your situation in the general chat. If you want to connect with the firm, we collect only what is needed to make that happen, and we do it securely.
+
+Can I use this chat anonymously?
+Yes. You can ask general questions and explore information without providing any personal details. We only ask for your contact information if you decide you want the firm to reach out to you.
+
+Cookies
+
+What are cookies and why is this chat asking about them?
+Cookies are small pieces of data stored by your browser when you visit a website or use a chat like this one. We use cookies to understand how visitors use this chat so we can improve it. We are asking because we want your permission before we collect any of that information. You can say no and still use this chat fully.
+
+What happens if I decline cookies?
+Nothing changes for you. You can still ask questions and use this chat exactly the same way. We just will not track the general topics you explore. If you decide to book a consultation, we will still ask for your contact details for that purpose.
+
+Do cookies collect my personal information?
+No. The cookies used by this chat collect only general information about the topics and questions explored. They do not collect your name, contact details, or any information that identifies you personally.
+
+Why We Ask You Not to Share Personal Details
+
+Why can't I share the details of my situation in this chat?
+This chat is designed to give you general information, not to collect the details of your specific case. For your privacy and protection, sensitive details about your situation should be shared directly with a lawyer in a secure and confidential conversation. This chat is not that conversation. It is a starting point to help you understand your options and connect you with the right person.
+
+Is this chat confidential?
+This chat provides general information and is not a confidential legal communication. It does not create a lawyer-client relationship. If you want a confidential conversation, that happens when you speak directly with a lawyer. This chat is here to help you get to that conversation.
+
+What if I already shared personal details in this chat by accident?
+That is okay. This chat does not save your conversation content, so those details are not stored anywhere. Going forward, we recommend keeping the general chat to questions about process, options, and general information, and saving the details of your situation for your conversation with the firm.
+
+Your Rights
+
+Do I have the right to know what information you have about me?
+Yes. Under Canadian privacy law and other applicable laws, you have the right to ask what personal information we hold about you. If you submitted your contact details to book a consultation, you can ask the firm what information they have on file. Contact the firm directly and they will assist you.
+
+Can I ask you to delete my information?
+Yes. If you submitted your contact details and want them removed, you can contact the firm and request deletion. The firm will remove your information from their records. Because general chat analytics contain no personal information, there is nothing to delete on that side.
+
+Who do I contact if I have a privacy concern?
+If you have a concern about how your information was handled, contact the firm directly. They are responsible for the data you submitted through this chat. If your concern is about how the chat system itself operates, you can reach out to Output Systems, the company that built it.
+
+Will my information be shared with anyone?
+Your contact information is shared only with the firm you are connecting with through this chat. It is not sold, shared with advertisers, or passed to any third party. The firm uses it only to follow up with you about your consultation request.
+
+Will the firm contact me by email or text after I submit my information?
+The firm may contact you by your preferred method to follow up on your consultation request. When you submit your information, we ask for your consent before passing it to the firm. You can indicate how you prefer to be contacted. If you no longer want to be contacted, let the firm know and they will stop.
+
+This Chat and Legal Advice
+
+Is the information in this chat private and protected like talking to a lawyer?
+No. This chat is not a lawyer-client conversation and does not have the same legal protections as one. It provides general information to help you understand your options. A protected confidential conversation happens when you speak directly with a lawyer. This chat is here to help you get to that conversation.
+
+Does using this chat mean the firm is my lawyer?
+No. Using this chat and submitting your contact details does not create a lawyer-client relationship. That relationship begins only when you and the firm formally agree to work together. Until then, the information in this chat is general and informational only.
+
+Can the other side in my case find out what I said in this chat?
+This chat does not store your conversation, so there is no transcript that could be shared or subpoenaed. The only record that exists is your contact details if you chose to submit them. For any confidential legal communication, always speak directly with your lawyer.
+
+Laws That Protect You
+
+What laws protect my privacy when I use this chat?
+Several privacy laws may apply depending on where you are located. In Canada, PIPEDA protects how your personal information is collected and used. CASL protects you from receiving unwanted commercial messages without your consent. In the European Union, GDPR gives you strong rights over your personal data. In California, CCPA gives you rights over your information including the right to know, the right to delete, and the right to opt out of data sale. This system is built to respect all of these.
+
+What is PIPEDA and does it protect me?
+PIPEDA is Canada's federal private-sector privacy law. It requires that organizations collect your personal information only with your consent, use it only for the purpose they told you about, and protect it from unauthorized access. If you are in Canada, PIPEDA applies to how this system and the firm handle your information.
+
+What is GDPR and does it apply to me?
+GDPR is the European Union's privacy law. It gives individuals in the EU strong rights over their personal data including the right to access it, correct it, delete it, and object to how it is used. If you are in the EU, GDPR applies to any personal data this system collects about you.
+
+What is CASL and how does it protect me?
+CASL is Canada's anti-spam law. It means that before a business can send you a commercial email, text, or other electronic message, they need your permission. When you submit your contact details through this chat, we ask for your consent before passing your information to the firm. That consent is what allows them to contact you. You can withdraw it at any time.
+
+What does PII mean and why does it matter?
+PII stands for Personally Identifiable Information. It is any information that can be used to identify you specifically, such as your name, phone number, or email address. This chat is designed to collect as little PII as possible. We collect it only when you choose to book a consultation, and we use it only to connect you with the firm.
+
+What is CCPA and does it apply to me?
+CCPA is California's privacy law. If you are a California resident, it gives you the right to know what personal information is collected about you, the right to have it deleted, and the right to say no to it being sold. This system does not sell your data. If you are in California and want to exercise your rights, contact the firm directly.
+
+

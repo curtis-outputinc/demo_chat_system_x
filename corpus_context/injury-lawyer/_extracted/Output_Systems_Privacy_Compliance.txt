@@ -1,0 +1,130 @@
+﻿Output Systems: Intelligent Chat System
+Privacy Compliance and Data Architecture Context Document
+
+This document defines how the Output Systems intelligent chat system handles data, how it complies with applicable privacy legislation in Canada, the United States, and the European Union, and how those obligations are applied in practice for both visitors using the system and client firms deploying it. This document is also a reference for Claude Code when building the system.
+
+1. The Data Architecture: Two Separate Buckets
+The chat system is built around a strict separation of two types of data. These two buckets are never connected, never merged, and never cross-referenced. There is no bridge between them.
+
+Bucket A: Insights Data
+Bucket A contains anonymized interaction data used exclusively to generate business intelligence for the client firm's dashboard. This is Output Two of the system.
+
+What is saved in Bucket A:
+Questions asked by visitors
+Topics and practice areas explored
+General interaction patterns such as where visitors drop off or what they ask most
+
+What is never saved in Bucket A:
+Names, phone numbers, email addresses, or any identifying information
+Descriptions of injuries or incidents
+Conversation transcripts
+Any content that could identify a specific individual
+
+Bucket B: Appointment Data
+Bucket B contains personal contact information collected only when a visitor actively chooses to book an appointment or request to be contacted by the firm. This data exists solely to facilitate that connection.
+
+What is saved in Bucket B:
+Name
+Phone number
+Email address
+Preferred contact method
+Explicit consent confirmation
+
+What is never saved in Bucket B:
+Conversation history
+Injury or incident descriptions
+Any link to Bucket A data
+
+The visitor's story, medical details, and situation are not saved anywhere in the system. When they speak with the lawyer, they share their story directly in that conversation. The chat system's job is to connect them, not to document them.
+
+2. Cookie Consent
+A cookie consent notice is displayed to every visitor at the start of the chat session, before any interaction begins. The notice explains what data the system collects, how it is used, and gives the visitor the option to accept or decline non-essential data collection.
+
+Cookie consent notice template:
+"This chat uses cookies to improve your experience and help us understand how visitors use our service. We do not collect personal information unless you choose to provide it to book a consultation. By continuing, you agree to our use of cookies for analytics purposes only. You can decline non-essential cookies and still use this chat."
+
+Only essential session cookies are used if the visitor declines. Insight data is not collected for visitors who decline analytics cookies.
+
+3. Applicable Privacy Legislation
+The chat system is designed to comply with the following privacy frameworks. Each framework applies depending on the location of the visitor and the client firm deploying the system.
+
+3.1 PIPEDA (Canada)
+The Personal Information Protection and Electronic Documents Act governs how private-sector organizations in Canada collect, use, and disclose personal information in the course of commercial activities.
+
+How this system complies:
+Personal information is collected only with the knowledge and consent of the visitor at the point of appointment booking.
+Personal information is used only for the purpose it was collected, which is to connect the visitor with the law firm.
+Personal information is not used for insights, analytics, or any secondary purpose.
+Insight data in Bucket A contains no personal information and therefore falls outside the scope of PIPEDA personal information requirements.
+Visitors are informed of the data collection purpose before providing any information.
+
+3.2 CASL (Canada)
+Canada's Anti-Spam Legislation governs commercial electronic messages and requires express or implied consent before sending emails, texts, or other electronic communications to individuals.
+
+How this system complies:
+The system collects explicit consent from the visitor before their contact information is shared with the law firm.
+Consent language is clear and unambiguous: the visitor is told exactly who will contact them and why.
+No commercial electronic messages are sent from the chat system itself. Any follow-up communication comes from the law firm under their own CASL obligations.
+Consent records are stored in Bucket B alongside the contact information.
+
+3.3 GDPR (European Union)
+The General Data Protection Regulation applies to any organization processing the personal data of individuals located in the European Union, regardless of where the organization is based. If a visitor accessing the demo or a deployed system is located in the EU, GDPR applies.
+
+How this system complies:
+Personal data is collected only with a lawful basis, which in this context is explicit consent provided at the point of appointment booking.
+The purpose of data collection is clearly stated before the visitor provides any information.
+Personal data is not processed for any purpose beyond connecting the visitor with the firm.
+Bucket A insight data contains no personal data and is therefore not subject to GDPR personal data requirements.
+Visitors have the right to request deletion of their Bucket B data. Client firms are responsible for honoring deletion requests for data they hold.
+Cookie consent is obtained before any non-essential data collection begins.
+
+3.4 United States Privacy Frameworks
+The United States does not have a single federal privacy law equivalent to GDPR or PIPEDA. Compliance in the US context is governed by a combination of federal and state-level frameworks depending on the nature of the data and the location of the visitor.
+
+CCPA and CPRA (California):
+Requires disclosure of data collection practices, the right to opt out of data sale, and the right to deletion. This system does not sell data. Bucket A contains no personal information. Bucket B data is used only for the stated appointment purpose.
+
+TCPA (Telephone Consumer Protection Act):
+Governs automated calls and texts. Any follow-up communication from the law firm must comply with TCPA. The chat system collects consent language that can support TCPA compliance for the firm.
+
+CAN-SPAM Act:
+Governs commercial email. Any email follow-up from the law firm falls under CAN-SPAM. The chat system collects the visitor's email and consent, but the firm is responsible for CAN-SPAM compliance in their outreach.
+
+HIPAA:
+Does not apply directly to this chat system because no medical records or protected health information are collected. The system actively discourages sharing of detailed medical information in chat.
+
+4. How the Chat System Protects Visitors
+The system opens with a cookie consent notice before any interaction begins.
+The system delivers a legal disclaimer at the start of every client-mode conversation making clear that no personal details should be shared in chat.
+The system actively monitors for and redirects any attempt by a visitor to share personal details, injury descriptions, or case specifics before the appointment booking stage.
+Personal information is collected only at the point of voluntary appointment booking with explicit consent.
+Conversation content about injuries or incidents is not saved anywhere in the system.
+Insight data contains no personal information and cannot be used to identify any individual.
+The system makes clear that using the chat does not create a lawyer-client relationship.
+
+5. How the Chat System Protects Output Systems and Client Firms
+The system never provides legal advice, case evaluations, or compensation estimates, protecting the client firm from unauthorized practice of law liability.
+All responses stay within approved general information boundaries, reducing the firm's exposure to malpractice-related claims arising from chat content.
+Disclaimers are displayed at the opening of every session and reinforced dynamically when conversations approach sensitive legal territory.
+The clean separation of Bucket A and Bucket B means Output Systems and the client firm are not holding combined data sets that could create privacy liability.
+Consent is collected and recorded before any personal information is passed to the firm, protecting both parties from CASL, TCPA, and GDPR consent-related enforcement.
+The system does not store sensitive medical information, shielding both Output Systems and the client firm from HIPAA-adjacent exposure.
+
+6. Responsibility Boundaries
+Output Systems is responsible for building and maintaining the chat system in compliance with the frameworks described in this document. Client firms are responsible for:
+
+Their own follow-up communications with visitors, including compliance with CASL, TCPA, and CAN-SPAM in their outreach.
+Their own privacy policy and terms of service, which should cover data received from the chat system.
+Honoring visitor requests to access or delete their personal data held by the firm.
+Any legal and regulatory obligations specific to their jurisdiction or practice area.
+
+7. Note for Claude Code
+When building the system, the following architecture decisions are locked based on the compliance requirements in this document:
+
+Bucket A and Bucket B must be stored in completely separate database tables with no foreign key relationship between them.
+No conversation transcript or injury description is written to any database table at any point.
+Bucket A records only the question text and topic category, with no session ID, IP address, or any other identifier.
+Bucket B is written only after the visitor has confirmed consent, name, phone, email, and preferred contact method.
+Cookie consent state must be checked before any Bucket A write occurs. If the visitor declined analytics cookies, Bucket A receives nothing.
+The disclaimer and cookie consent notice must appear before the first chat interaction in every session without exception.
+

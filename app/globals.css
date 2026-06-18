@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@custom-variant theme-dark (.theme-dark &);
+@custom-variant theme-light (.theme-light &);
+
+@theme {
+  /* Brand tokens */
+  --color-bg: #000000;
+  --color-brand-blue: #385ee6;
+  --color-brand-green: #00ff2f;
+  --color-brand-teal: #07e4c6;
+
+  /* Typography */
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+/* Admin dashboard theme variables.
+   The .theme-dark / .theme-light classes are set on <html> by the theme init
+   script in lib/insights/theme.ts. Chatbot pages use hardcoded dark Tailwind
+   classes and are unaffected. */
+
+.theme-dark {
+  --admin-bg: #000000;
+  --admin-bg-elevated: #0a0a0a;
+  --admin-bg-tile: #0d0d0d;
+  /* Foreground is solid white across muted and subtle variants too — no gray text. */
+  --admin-fg: #ffffff;
+  --admin-fg-muted: #ffffff;
+  --admin-fg-subtle: #ffffff;
+  --admin-border: rgba(255, 255, 255, 0.10);
+  --admin-border-strong: rgba(255, 255, 255, 0.18);
+  --admin-accent: #07e4c6;
+  --admin-accent-dim: rgba(7, 228, 198, 0.18);
+  --admin-tile-hover: rgba(255, 255, 255, 0.04);
+  --admin-link: #07e4c6;
+  --admin-link-hover: #1ae0cb;
+  --admin-success: #9fff66;
+  --admin-warning: #fbbf24;
+  --admin-danger: #f87171;
+  --admin-info: #60a5fa;
+  --admin-chart-1: #07e4c6;
+  --admin-chart-2: #385ee6;
+  --admin-chart-3: #fbbf24;
+  --admin-chart-4: #f87171;
+  --admin-chart-5: #c084fc;
+  --admin-chart-grid: rgba(255, 255, 255, 0.18);
+  --admin-chart-text: #ffffff;
+  /* Inputs get their own surface so the text box is visibly lifted off the page background. */
+  --admin-input-bg: #262626;
+  --admin-input-border: rgba(255, 255, 255, 0.20);
+  --admin-input-placeholder: rgba(255, 255, 255, 0.55);
+}
+
+.theme-light {
+  --admin-bg: #fafafa;
+  --admin-bg-elevated: #ffffff;
+  --admin-bg-tile: #ffffff;
+  /* Foreground is solid black across muted and subtle variants too. */
+  --admin-fg: #0a0a0a;
+  --admin-fg-muted: #0a0a0a;
+  --admin-fg-subtle: #0a0a0a;
+  --admin-border: rgba(0, 0, 0, 0.08);
+  --admin-border-strong: rgba(0, 0, 0, 0.14);
+  --admin-accent: #0a9d8b;
+  --admin-accent-dim: rgba(7, 228, 198, 0.15);
+  --admin-tile-hover: rgba(0, 0, 0, 0.03);
+  --admin-link: #0a9d8b;
+  --admin-link-hover: #14b8a6;
+  --admin-success: #16a34a;
+  --admin-warning: #d97706;
+  --admin-danger: #dc2626;
+  --admin-info: #2563eb;
+  --admin-chart-1: #0a9d8b;
+  --admin-chart-2: #385ee6;
+  --admin-chart-3: #d97706;
+  --admin-chart-4: #dc2626;
+  --admin-chart-5: #9333ea;
+  --admin-chart-grid: rgba(0, 0, 0, 0.18);
+  --admin-chart-text: #0a0a0a;
+  --admin-input-bg: #ffffff;
+  --admin-input-border: rgba(0, 0, 0, 0.22);
+  --admin-input-placeholder: rgba(0, 0, 0, 0.45);
+}
+
+/* Inputs across the admin shell pick up the input-specific background. */
+.admin-shell input[type="text"]::placeholder,
+.admin-shell input[type="search"]::placeholder {
+  color: var(--admin-input-placeholder);
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: white;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Desktop font bump: every Tailwind text size class +2px at md+ breakpoint.
+   Admin shell has its own more-specific overrides, so those still win there. */
+@media (min-width: 768px) {
+  .text-xs { font-size: 14px; line-height: 1.4; }
+  .text-sm { font-size: 16px; line-height: 1.45; }
+  .text-base { font-size: 18px; line-height: 1.55; }
+  .text-lg { font-size: 20px; line-height: 1.55; }
+  .text-xl { font-size: 22px; line-height: 1.4; }
+  .text-2xl { font-size: 26px; line-height: 1.35; }
+}
+
+/* Selection accent uses the brand green */
+::selection {
+  background-color: var(--color-brand-green);
+  color: var(--color-bg);
+}
+
+/* Admin-only body override: the admin layout wraps in a div that uses the
+   theme background. */
+.admin-shell {
+  background: var(--admin-bg);
+  color: var(--admin-fg);
+  min-height: 100vh;
+}
+
+/* Admin font size scale: every Tailwind text class is bumped +1px from default
+   inside the admin shell, plus the arbitrary [10px] / [11px] / [13px] / [14px]
+   values used in the admin components. */
+.admin-shell .text-xs { font-size: 13px !important; }
+.admin-shell .text-sm { font-size: 15px !important; }
+.admin-shell .text-base { font-size: 17px !important; }
+.admin-shell .text-lg { font-size: 19px !important; }
+.admin-shell .text-xl { font-size: 21px !important; }
+.admin-shell .text-2xl { font-size: 25px !important; }
+.admin-shell .text-3xl { font-size: 31px !important; }
+.admin-shell .text-\[10px\] { font-size: 11px !important; }
+.admin-shell .text-\[11px\] { font-size: 12px !important; }
+.admin-shell .text-\[13px\] { font-size: 14px !important; }
+.admin-shell .text-\[14px\] { font-size: 15px !important; }
+
+/* Print styles for the report viewer */
+@media print {
+  .admin-shell {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .report-print-wrapper {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+  .report-print-wrapper * {
+    background: transparent !important;
+    color: #000000 !important;
+    border-color: #cccccc !important;
+  }
+}

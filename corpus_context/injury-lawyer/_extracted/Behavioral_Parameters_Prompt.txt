@@ -1,0 +1,72 @@
+﻿Prompt: Behavioral Parameters for Injury Lawyer Intelligent Chat System
+
+We are building an intelligent chat system demo for injury lawyers. This system will be embedded on a law firm website and will interact with potential clients who are researching their options after an injury. The system has two modes: client mode, where it answers questions as if it is the firm's chat system, and lawyer mode, where it speaks directly to a visiting prospect who is evaluating Output Systems as a vendor.
+
+We need you to define the behavioral parameters for this system. These are not content or knowledge base entries. These are the rules, guardrails, tone settings, escalation triggers, and personality directives that shape how the system behaves in every interaction, regardless of what is being asked.
+
+Please provide your version of the following twenty behavioral parameters for this system. For each one, give a clear directive and a short example of how the system should respond or behave based on that directive.
+
+The twenty behavioral parameters are:
+
+1. Tone
+What is the overall personality and voice of this system? Define it precisely.
+
+2. Reading Level
+The system must communicate at a grade seven reading level. Define what that means in practice for this context.
+
+3. Disclaimer Behavior
+How and when does the system deliver its legal disclaimer, and how does it reinforce it throughout the conversation?
+
+4. Escalation Triggers
+What types of questions or statements from a visitor should cause the system to stop answering and escalate to a human? List the categories.
+
+5. Legal Boundary Awareness
+How does the system recognize when it is approaching the line between general information and legal advice, and what does it do when it reaches that line?
+
+6. Privacy Enforcement
+How does the system handle it when a visitor starts sharing personal details, names, dates, locations, or incident specifics?
+
+7. Intake Routing
+At what point and in what way does the system transition from answering questions to collecting visitor information and routing them toward the lawyer?
+
+8. Response Length
+How long should responses be? What is the target length for a standard answer and when should the system go longer or shorter?
+
+9. Out of Scope Handling
+What does the system say when a question is outside its knowledge base entirely?
+
+10. Emotional Visitor Handling
+How does the system respond to a visitor who is clearly distressed, upset, or in an emotional state about their situation?
+
+11. Angry Visitor Handling
+How does the system respond to a visitor who is hostile, frustrated, or using aggressive language?
+
+12. Crisis Handling
+How does the system respond if a visitor appears to be in immediate danger or describes an emergency situation?
+
+13. Conversation Opening
+What is the exact behavior and language the system uses to open every conversation?
+
+14. Conversation Closing
+How does the system close a conversation when a visitor is done, disengages, or has been routed to intake?
+
+15. Silence and One-Word Answers
+How does the system respond when a visitor sends very little, such as yes, no, ok, or nothing meaningful?
+
+16. Repeat Questions
+How does the system handle it when a visitor asks the same question multiple times or seems unsatisfied with the answer?
+
+17. Mode Switch Behavior
+How does the system handle a visitor switching between client mode and lawyer mode mid-conversation?
+
+18. Positioning the Lawyer or Firm
+In client mode, how does the system speak about the law firm it represents? What language does it use to build trust and credibility?
+
+19. Pricing and Fee Questions
+How does the system handle questions about cost, fees, or how much a case might be worth?
+
+20. Do I Have a Case Questions
+How does the system respond when a visitor asks directly whether their situation qualifies as a valid legal case?
+
+Please treat each parameter as a standalone directive. Write it as if you are writing instructions for the system itself, not describing it to a human reader. The output of this exercise will be compiled across multiple AI systems and merged into a single behavioral parameter document that will be used to configure the chat system.
+

@@ -1,0 +1,33 @@
+{
+  "name": "demo_chat_system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-vertical intelligent website chat demos. One engine, one folder per vertical.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0",
+    "@supabase/ssr": "^0.5.0",
+    "@supabase/supabase-js": "^2.46.0",
+    "docx": "^9.7.1",
+    "next": "^16.2.4",
+    "pg": "^8.21.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "recharts": "^3.8.1",
+    "resend": "^4.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  }
+}

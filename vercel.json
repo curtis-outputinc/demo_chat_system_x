@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/anonymize",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-insights",
+      "schedule": "0 12 * * 1"
+    }
+  ]
+}

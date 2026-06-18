@@ -1,0 +1,45 @@
+{
+  "brandName": "Injury Law Demo",
+  "trade": "injury lawyer",
+  "productName": "intelligent website chat system",
+  "accentColor": "#1ae0cb",
+  "contactFlow": "book-only",
+  "layout": "split",
+  "theme": "light",
+  "heroImage": "/images/injury-lawyer/lawyer-handshake.jpg",
+  "logoPath": "/logo-light.png",
+  "logoDark": "/logo.png",
+  "siteUrl": "https://injurylaw.output.systems",
+  "bookingUrl": "https://cal.com/output-systems",
+  "privacyUrl": "",
+  "consentText": "",
+  "modes": {
+    "client": {
+      "label": "Client side",
+      "blurb": "Ask questions from the perspective of a customer",
+      "greeting": "Hi, thanks for reaching out. Are you looking for help after an injury or accident? Tell me what happened and I'll point you in the right direction.",
+      "chips": [
+        "I was in a car accident, can you help?",
+        "How much does a consultation cost?",
+        "What types of cases do you handle?",
+        "How long do I have to file a claim?"
+      ]
+    },
+    "professional": {
+      "label": "Lawyer side",
+      "blurb": "Ask questions about how Output could work with your business",
+      "greeting": "Hey, want to see how this assistant could work on your firm's website? Ask me anything about how it handles your clients and intake.",
+      "chips": [
+        "How would this help my firm?",
+        "How does it handle new client intake?",
+        "Can it book consultations for me?",
+        "What does it cost to set up?"
+      ]
+    }
+  },
+  "approvedLinks": [],
+  "disclaimer": {
+    "checkbox": "This AI chat agent provides general information only. It does not provide legal advice, and using it does not create an attorney-client relationship.",
+    "footer": "Chat systems we build for lawyers are custom-designed to comply with the jurisdiction the firm serves."
+  }
+}

@@ -1,0 +1,104 @@
+﻿Output Systems: Intelligent Chat System
+Privacy and Data Protection — Professional Mode Response Guide
+
+This document provides the chat system with responses for privacy and data protection questions asked by lawyers, mortgage brokers, and other business owners evaluating Output Systems as a vendor. All responses are from the Output Systems perspective. Privacy is a strength of this system and responses should communicate that directly and confidently.
+
+General Privacy Questions
+
+Is this chat system compliant with privacy laws?
+Yes. The Output Systems intelligent chat system is built to comply with PIPEDA and CASL in Canada, GDPR for any visitors located in the European Union, and the applicable US frameworks including CCPA, TCPA, and CAN-SPAM. Compliance is built into the architecture of how the system collects, stores, and handles data from the ground up.
+
+What data does the system actually collect from my visitors?
+The system collects two categories of data and keeps them completely separate. The first is anonymized insight data: the questions visitors ask and the topics they explore. No names, no contact details, and no personal information of any kind is attached to this. The second is appointment data: name, phone number, email, preferred contact method, and explicit consent. This is collected only when a visitor chooses to book a consultation or request to be contacted. These two categories are stored in separate database tables with no connection between them.
+
+Does the system store conversation transcripts or injury descriptions?
+No. Conversation content, injury descriptions, incident details, and personal narratives are never written to any database. Visitors are actively redirected away from sharing case-specific details in chat, and even if they do, that content is not saved anywhere in the system.
+
+Who has access to the data the system collects?
+You, as the deploying firm, have access to the appointment data your visitors submit. Output Systems has administrative access for maintenance and support purposes. No third parties have access to visitor data. The insight data used for your dashboard is fully anonymized and cannot be traced back to any individual.
+
+Does Output Systems sell visitor data?
+No. Output Systems does not sell, share, rent, or trade visitor data to any third party for any purpose. This applies to both the anonymized insight data and the appointment data.
+
+Where is the data stored?
+Data is stored in Supabase, a secure cloud database platform. Data is encrypted at rest and in transit. Access is controlled and logged. The storage infrastructure meets the security requirements of the privacy frameworks this system is built to comply with.
+
+How long is visitor data retained?
+Appointment data is retained for as long as your firm requires it to manage the lead or client relationship. Output Systems does not impose a fixed retention period on your behalf, but we recommend your firm establish a clear retention policy in line with your jurisdiction's requirements. Insight data is retained for dashboard analytics purposes and can be cleared on request.
+
+Can visitors request that their data be deleted?
+Yes. Under GDPR, CCPA, and PIPEDA, individuals have the right to request deletion of their personal data. When a visitor makes such a request, the appointment data associated with them can be deleted from the system. Output Systems will support your firm in handling these requests. Because insight data contains no personal information, there is nothing to delete on that side.
+
+PIPEDA — Canada
+
+How does this system comply with PIPEDA?
+PIPEDA requires that personal information be collected with knowledge and consent, used only for the purpose it was collected, and protected appropriately. This system collects personal information only when a visitor actively chooses to book a consultation and explicitly consents. That information is used only to connect the visitor with your firm. It is not used for analytics, marketing, or any secondary purpose. The data is stored securely and is not shared with third parties.
+
+Does my firm take on PIPEDA obligations when using this system?
+Your firm takes on PIPEDA obligations for any personal information you receive and act on through the system, specifically the appointment data submitted by visitors. Output Systems is responsible for building the system to collect and transmit that data in a PIPEDA-compliant way. Your firm is responsible for how you handle it after you receive it, including how you follow up, how long you retain it, and how you respond to access or deletion requests.
+
+Does the system have a designated privacy contact?
+Output Systems maintains internal accountability for privacy compliance. If you or your visitors have a privacy concern related to how the system operates, you can raise it with Output Systems directly. Your firm should also designate its own privacy contact for handling visitor inquiries about data your firm holds.
+
+CASL — Canada
+
+How does this system comply with CASL?
+CASL requires express or implied consent before sending commercial electronic messages. The system collects explicit consent from the visitor before their contact information is passed to your firm. The consent language makes clear who will be contacting them and for what purpose. The system itself does not send any commercial electronic messages. Any follow-up emails, texts, or calls come from your firm, which means your firm's CASL obligations apply to that outreach.
+
+Is the consent collected through this system valid under CASL?
+The consent collected through the system is designed to meet CASL's express consent requirements. The visitor is told clearly who will contact them, why, and how. They are asked to confirm before their information is submitted. Consent records are stored alongside the appointment data. Your firm should review the consent language with your legal counsel to confirm it meets your specific compliance needs.
+
+What is my firm responsible for under CASL after receiving a lead?
+Your firm is responsible for ensuring all follow-up communications comply with CASL. This includes honoring unsubscribe requests promptly, not contacting individuals who have not consented, and maintaining your own records of consent for any ongoing communication relationship.
+
+GDPR — European Union
+
+Does this system comply with GDPR?
+Yes. If any visitor accessing your chat system is located in the European Union, GDPR applies. The system is built to comply. Personal data is collected only with explicit consent at the point of appointment booking. The purpose of collection is clearly stated. Data is not used for any secondary purpose. Visitors have the right to request access, correction, and deletion of their data. Cookie consent is obtained before any non-essential data collection begins.
+
+What is the lawful basis for processing personal data under GDPR?
+The lawful basis is explicit consent. Visitors are presented with a clear statement of what data is being collected, who will receive it, and why, before they provide any information. They must actively confirm consent before the data is submitted.
+
+Does this system require a Data Processing Agreement under GDPR?
+If your firm is subject to GDPR and Output Systems processes personal data on your behalf, a Data Processing Agreement may be required. Output Systems can provide a DPA for firms that need one. Speak with your legal counsel to determine whether this applies to your specific situation.
+
+What happens if a visitor in the EU requests access to or deletion of their data?
+Output Systems will support your firm in handling these requests. Appointment data can be located and deleted on request. Because insight data contains no personal information, it is not subject to access or deletion requests under GDPR.
+
+United States Privacy Frameworks
+
+Does this system comply with US privacy laws?
+The US does not have a single federal privacy law, but the system is built to align with the major applicable frameworks. For California residents, the system complies with CCPA and CPRA by disclosing data practices, not selling data, and honoring deletion rights. For telephone and text follow-up, the consent collected supports TCPA compliance for your firm. For email follow-up, the system collects consent and contact information in a way that supports your firm's CAN-SPAM compliance.
+
+Does this system comply with HIPAA?
+HIPAA applies to covered entities and their business associates handling protected health information. This system does not collect medical records, health insurance information, or protected health information of any kind. Visitors are actively discouraged from sharing detailed medical information in chat. HIPAA does not apply directly to this system, but the design choices reflect a similar level of caution around health-related data.
+
+What is TCPA and how does this system help my firm comply?
+The Telephone Consumer Protection Act governs automated calls and texts to consumers. Before your firm contacts a visitor by phone or text, you need documented consent. The system collects explicit consent from the visitor at the point of appointment booking, which your firm can use to support TCPA compliance in your follow-up outreach. Your firm's legal counsel should confirm the consent language meets your specific TCPA requirements.
+
+What is CCPA and does it affect my firm?
+The California Consumer Privacy Act gives California residents rights over their personal data including the right to know what is collected, the right to delete it, and the right to opt out of data sale. If your firm serves California residents, CCPA may apply to how you handle the appointment data you receive through this system. Output Systems does not sell data. Your firm should review its own CCPA obligations with legal counsel.
+
+PII and Data Minimization
+
+What counts as PII in the context of this system?
+Personally Identifiable Information includes any data that can be used to identify a specific individual. In the context of this system, PII is limited to the appointment data collected at booking: name, phone number, email address, and preferred contact method. The insight data collected for dashboard analytics contains no PII. Questions asked, topics explored, and interaction patterns are recorded with no identifying information attached.
+
+How does the system minimize PII collection?
+The system is designed to collect only what is necessary to achieve the stated purpose. For analytics, it collects anonymized question and topic data with nothing that could identify a visitor. For appointment booking, it collects only the contact details needed for your firm to follow up. It does not collect Social Security numbers, health insurance IDs, financial account details, or detailed medical information.
+
+What happens if a visitor accidentally shares sensitive personal information in the chat?
+The system is built to detect when a visitor begins sharing sensitive personal details and redirect them. It reminds the visitor that this chat is for general information only and encourages them to share sensitive details directly with the firm. Critically, even if a visitor does share sensitive information in chat, that content is not saved to any database. The system does not store conversation content.
+
+Cookie Compliance
+
+Does the system use cookies?
+Yes. The system uses essential session cookies to function and optional analytics cookies to track anonymized interaction data for your dashboard. Visitors are presented with a cookie consent notice at the start of every session before any non-essential cookies are set. Visitors can decline analytics cookies and still use the chat fully.
+
+Is the cookie consent notice compliant with GDPR?
+The cookie consent notice is designed to meet GDPR requirements. It clearly identifies what cookies are used, what they do, and gives the visitor a genuine choice to accept or decline non-essential cookies before those cookies are set. Pre-ticked boxes are not used. Consent is active, not assumed.
+
+What happens if a visitor declines cookies?
+If a visitor declines non-essential analytics cookies, the system continues to function normally for that visitor. No insight data is recorded for that session. Only essential session cookies required for the chat to operate are used.
+
+

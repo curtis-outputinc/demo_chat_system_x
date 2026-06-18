@@ -1,0 +1,45 @@
+{
+  "brandName": "Realtor Demo",
+  "trade": "real estate agent",
+  "productName": "intelligent website chat system",
+  "accentColor": "#1ae0cb",
+  "contactFlow": "book-and-share",
+  "layout": "split",
+  "theme": "light",
+  "heroImage": "/images/injury-lawyer/lawyer-handshake.jpg",
+  "logoPath": "/logo-light.png",
+  "logoDark": "/logo.png",
+  "siteUrl": "https://realtor.output.systems",
+  "bookingUrl": "https://cal.com/output-systems",
+  "privacyUrl": "",
+  "consentText": "",
+  "modes": {
+    "client": {
+      "label": "Client side",
+      "blurb": "Ask questions from the perspective of a buyer, seller, or renter",
+      "greeting": "Hi, thanks for reaching out. Are you looking to buy, sell, or rent? Tell me a little about what you have in mind and I'll point you in the right direction.",
+      "chips": [
+        "I'm thinking about buying my first home, where do I start?",
+        "How much could my home sell for?",
+        "What's the market like right now?",
+        "Do you help with rentals or just sales?"
+      ]
+    },
+    "professional": {
+      "label": "Agent side",
+      "blurb": "Ask questions about how Output could work with your brokerage",
+      "greeting": "Hey, want to see how this assistant could work on your brokerage's website? Ask me anything about how it handles new leads, listing questions, or what your team would learn from it.",
+      "chips": [
+        "How would this help my brokerage?",
+        "How does it handle new buyer leads?",
+        "Can it answer questions about listings?",
+        "What does it cost to set up?"
+      ]
+    }
+  },
+  "approvedLinks": [],
+  "disclaimer": {
+    "checkbox": "This AI chat agent provides general information only. It does not provide financial or legal advice, and using it does not create a realtor-client relationship.",
+    "footer": "AI chat systems we build for Realtors are custom-designed to comply with the jurisdiction the real estate agent serves in."
+  }
+}

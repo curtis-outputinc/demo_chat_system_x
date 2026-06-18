@@ -1,0 +1,30 @@
+{
+  "brandName": "",
+  "trade": "",
+  "productName": "intelligent website chat system",
+  "accentColor": "#1ae0cb",
+  "logoPath": "/logo.png",
+  "siteUrl": "",
+  "bookingUrl": "",
+  "privacyUrl": "",
+  "consentText": "",
+  "contactFlow": "book-and-share",
+  "layout": "centered",
+  "theme": "dark",
+  "heroImage": "",
+  "modes": {
+    "client": {
+      "label": "Client side",
+      "blurb": "",
+      "greeting": "",
+      "chips": ["", "", "", ""]
+    },
+    "professional": {
+      "label": "",
+      "blurb": "",
+      "greeting": "",
+      "chips": ["", "", "", ""]
+    }
+  },
+  "approvedLinks": []
+}
