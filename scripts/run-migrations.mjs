@@ -3,6 +3,10 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import pg from 'pg';
+import dns from 'node:dns';
+// Force IPv4 — newer Node prefers IPv6 when both A and AAAA exist, but the
+// Supabase host's IPv6 endpoint is sometimes unreachable from this machine.
+dns.setDefaultResultOrder('ipv4first');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -23,6 +27,15 @@ if (!url) {
   process.exit(1);
 }
 
+// Resolve the Postgres host to an IPv4 address ourselves and override host in
+// pg's config. The Supabase host's IPv6 endpoint is sometimes unreachable from
+// this network; pg client doesn't honour dns.setDefaultResultOrder.
+const u = new URL(url);
+const ipv4 = await new Promise((resolve, reject) =>
+  dns.lookup(u.hostname, { family: 4 }, (e, addr) => (e ? reject(e) : resolve(addr))),
+);
+console.log(`resolved ${u.hostname} to IPv4 ${ipv4}`);
+
 const files = [
   'supabase/migrations/20260430000001_initial_chatbot_schema.sql',
   'supabase/migrations/20260509000001_chatbot_v1_features.sql',
@@ -31,7 +44,14 @@ const files = [
 ];
 
 const { Client } = pg;
-const client = new Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
+const client = new Client({
+  host: ipv4,
+  port: Number(u.port) || 5432,
+  user: decodeURIComponent(u.username),
+  password: decodeURIComponent(u.password),
+  database: u.pathname.replace(/^\//, '') || 'postgres',
+  ssl: { rejectUnauthorized: false, servername: u.hostname },
+});
 await client.connect();
 console.log('connected to postgres');
 

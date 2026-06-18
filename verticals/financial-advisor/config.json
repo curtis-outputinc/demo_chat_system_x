@@ -1,0 +1,45 @@
+{
+  "brandName": "Financial Advisor Demo",
+  "trade": "financial advisor",
+  "productName": "intelligent website chat system",
+  "accentColor": "#1ae0cb",
+  "contactFlow": "book-and-share",
+  "layout": "split",
+  "theme": "light",
+  "heroImage": "/images/injury-lawyer/lawyer-handshake.jpg",
+  "logoPath": "/logo-light.png",
+  "logoDark": "/logo.png",
+  "siteUrl": "https://financialadvisor.output.systems",
+  "bookingUrl": "https://cal.com/output-systems",
+  "privacyUrl": "",
+  "consentText": "",
+  "modes": {
+    "client": {
+      "label": "Client side",
+      "blurb": "Ask questions from the perspective of a current or prospective client",
+      "greeting": "Hi, thanks for reaching out. Are you thinking about retirement planning, investment management, or just looking at your overall financial picture? Tell me a little about what you have in mind and I'll point you in the right direction.",
+      "chips": [
+        "I'm thinking about retirement, where do I start?",
+        "How do you manage investments for clients?",
+        "What's the difference between an advisor and a planner?",
+        "How are your fees structured?"
+      ]
+    },
+    "professional": {
+      "label": "Advisor side",
+      "blurb": "Ask questions about how Output could work with your practice",
+      "greeting": "Hey, want to see how this assistant could work on your practice's website? Ask me anything about how it handles new prospect intake, after-hours questions, or what your team would learn from it.",
+      "chips": [
+        "How would this help my practice?",
+        "How does it handle new prospect leads?",
+        "Can it answer general planning questions?",
+        "What does it cost to set up?"
+      ]
+    }
+  },
+  "approvedLinks": [],
+  "disclaimer": {
+    "checkbox": "This AI chat agent provides general information only. It does not provide financial, investment, legal, or tax advice, and using it does not create an advisor-client relationship.",
+    "footer": "AI chat systems we build for financial advisors are custom-designed to comply with the jurisdiction the advisor is licensed to operate in."
+  }
+}
