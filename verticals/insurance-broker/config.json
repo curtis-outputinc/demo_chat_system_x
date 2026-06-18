@@ -1,0 +1,45 @@
+{
+  "brandName": "Insurance Broker Demo",
+  "trade": "insurance broker",
+  "productName": "intelligent website chat system",
+  "accentColor": "#1ae0cb",
+  "contactFlow": "book-and-share",
+  "layout": "split",
+  "theme": "light",
+  "heroImage": "/images/injury-lawyer/lawyer-handshake.jpg",
+  "logoPath": "/logo-light.png",
+  "logoDark": "/logo.png",
+  "siteUrl": "https://insurancebroker.output.systems",
+  "bookingUrl": "https://cal.com/output-systems",
+  "privacyUrl": "",
+  "consentText": "",
+  "modes": {
+    "client": {
+      "label": "Client side",
+      "blurb": "Ask questions from the perspective of a current or prospective policyholder",
+      "greeting": "Hi, thanks for reaching out. Are you looking at home, auto, life, health, business, or something else? Tell me a little about what you have in mind and I'll point you in the right direction.",
+      "chips": [
+        "I'm shopping for home insurance, where do I start?",
+        "What's the difference between term and whole life insurance?",
+        "Do I need disability insurance?",
+        "How do you find the best policy for me?"
+      ]
+    },
+    "professional": {
+      "label": "Broker side",
+      "blurb": "Ask questions about how Output could work with your brokerage",
+      "greeting": "Hey, want to see how this assistant could work on your brokerage's website? Ask me anything about how it handles client intake, after-hours questions, or what your team would learn from it.",
+      "chips": [
+        "How would this help my brokerage?",
+        "How does it handle new prospect leads?",
+        "Can it answer general coverage questions?",
+        "What does it cost to set up?"
+      ]
+    }
+  },
+  "approvedLinks": [],
+  "disclaimer": {
+    "checkbox": "This AI chat agent provides general information only. It does not provide financial, legal, or insurance advice, and using it does not create a broker-client relationship.",
+    "footer": "AI chat systems we build for insurance brokers are custom-designed to comply with the jurisdiction the broker is licensed to operate in."
+  }
+}

@@ -27,3 +27,7 @@ insert into tenants (slug, name, domain) values
 insert into tenants (slug, name, domain) values
   ('financial-advisor', 'Financial Advisor Demo', 'financialadvisor.output.systems')
   on conflict (slug) do nothing;
+
+insert into tenants (slug, name, domain) values
+  ('insurance-broker', 'Insurance Broker Demo', 'insurancebroker.output.systems')
+  on conflict (slug) do nothing;
