@@ -416,20 +416,30 @@ export default function Chat({
 
   function stopRecording() {
     keepListeningRef.current = false;
-    try {
-      recognitionRef.current?.stop();
-    } catch {
-      // ignore
+    const r = recognitionRef.current;
+    if (r) {
+      // Detach handlers so any in-flight or post-stop browser events don't
+      // call setInput and refill the box after the message has been sent.
+      try { r.onresult = null; } catch { /* ignore */ }
+      try { r.onend = null; } catch { /* ignore */ }
+      try { r.stop(); } catch { /* ignore */ }
     }
     setIsRecording(false);
   }
 
   // Send the current input. Used by both the Send button and the Enter key.
-  // Stops voice input first so an active mic doesn't keep refilling the box
-  // after the message is sent.
+  // Captures content first, then aggressively clears every place voice input
+  // can leak back into the visible textbox: stops the recognizer (and detaches
+  // its handlers), wipes the accumulated transcript ref, and empties the input
+  // state. Without this triple-clear, voice continues feeding the box after
+  // send because SpeechRecognition delivers final results asynchronously.
   function submitMessage() {
+    const content = input;
+    if (!content.trim() || isLoading) return;
     if (isRecording) stopRecording();
-    sendMessage(input);
+    finalTranscriptRef.current = '';
+    setInput('');
+    sendMessage(content);
   }
 
   async function sendMessage(content: string) {
