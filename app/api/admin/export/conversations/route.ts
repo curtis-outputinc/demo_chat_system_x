@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getSupabaseService, TENANT_SLUG } from '@/lib/supabase';
 import { parseRange } from '@/lib/insights/dates';
-import { rowsToCsv } from '@/lib/insights/exporters';
+import { rowsToCsv, rowsToXlsxBuffer } from '@/lib/insights/exporters';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const unansweredOnly = url.searchParams.get('unanswered') === '1';
   const page = url.searchParams.get('page');
   const q = url.searchParams.get('q');
+  const format = url.searchParams.get('format') === 'xlsx' ? 'xlsx' : 'csv';
   const range = parseRange(rangeToken);
 
   const supabase = getSupabaseService();
@@ -58,23 +59,33 @@ export async function GET(req: NextRequest) {
     rows = rows.filter((c) => hitSet.has(c.id as string));
   }
 
-  const csv = rowsToCsv(
-    ['id', 'started_at', 'source', 'page_context', 'outcome', 'message_count'],
-    rows.map((r) => [
-      r.id as string,
-      r.started_at as string,
-      r.source ?? '',
-      r.page_context ?? '',
-      r.outcome ?? '',
-      r.message_count as number,
-    ]),
-  );
+  const headers = ['id', 'started_at', 'source', 'page_context', 'outcome', 'message_count'];
+  const dataRows = rows.map((r) => [
+    r.id as string,
+    r.started_at as string,
+    r.source ?? '',
+    r.page_context ?? '',
+    r.outcome ?? '',
+    r.message_count as number,
+  ]);
 
-  const filename = `conversations-${rangeToken}-${new Date().toISOString().slice(0, 10)}.csv`;
+  const stamp = new Date().toISOString().slice(0, 10);
+
+  if (format === 'xlsx') {
+    const buffer = await rowsToXlsxBuffer('Conversations', headers, dataRows);
+    return new Response(new Uint8Array(buffer), {
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': `attachment; filename="conversations-${rangeToken}-${stamp}.xlsx"`,
+      },
+    });
+  }
+
+  const csv = rowsToCsv(headers, dataRows);
   return new Response(csv, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
-      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Disposition': `attachment; filename="conversations-${rangeToken}-${stamp}.csv"`,
     },
   });
 }

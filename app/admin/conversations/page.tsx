@@ -79,11 +79,13 @@ export default async function ConversationsList({
     rows = rows.filter((c) => hitSet.has(c.id as string));
   }
 
-  const csvUrl =
-    `/api/admin/export/conversations?range=${encodeURIComponent(rangeToken)}` +
+  const exportQuery =
+    `range=${encodeURIComponent(rangeToken)}` +
     (unansweredOnly ? '&unanswered=1' : '') +
     (sp.page ? `&page=${encodeURIComponent(sp.page)}` : '') +
     (sp.q ? `&q=${encodeURIComponent(sp.q)}` : '');
+  const csvUrl = `/api/admin/export/conversations?${exportQuery}`;
+  const xlsxUrl = `/api/admin/export/conversations?${exportQuery}&format=xlsx`;
 
   return (
     <div className="space-y-6">
@@ -102,6 +104,17 @@ export default async function ConversationsList({
         <div className="flex items-center gap-3">
           <RangePicker basePath={`${base}/conversations`} currentToken={rangeToken} />
           <a
+            href={xlsxUrl}
+            className="px-3 py-1.5 rounded-md text-xs font-semibold border"
+            style={{
+              borderColor: 'var(--admin-accent)',
+              background: 'var(--admin-accent)',
+              color: '#001210',
+            }}
+          >
+            Download XLSX
+          </a>
+          <a
             href={csvUrl}
             className="px-3 py-1.5 rounded-md text-xs font-semibold border"
             style={{
@@ -110,7 +123,7 @@ export default async function ConversationsList({
               color: 'var(--admin-fg)',
             }}
           >
-            Download CSV
+            CSV
           </a>
         </div>
       </header>

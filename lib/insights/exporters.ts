@@ -4,6 +4,9 @@
  * CSV export: simple manual encoding, no dependency. Universal compatibility
  * with Excel, Google Sheets, Numbers.
  *
+ * XLSX export: uses `exceljs` to produce a native .xlsx workbook with one
+ * sheet, formatted headers, and column widths sized to content.
+ *
  * DOCX export: uses the `docx` package to build a Word document server-side.
  *
  * PDF export: not implemented here. The report viewer page is print-friendly
@@ -19,6 +22,7 @@ import {
   HeadingLevel,
   AlignmentType,
 } from 'docx';
+import ExcelJS from 'exceljs';
 import type { ReportRecord } from './types';
 
 // -----------------------------------------------------------------------------
@@ -40,6 +44,51 @@ export function rowsToCsv(headers: string[], rows: (string | number | null)[][])
     lines.push(row.map(escape).join(','));
   }
   return lines.join('\n');
+}
+
+// -----------------------------------------------------------------------------
+// XLSX
+// -----------------------------------------------------------------------------
+
+export async function rowsToXlsxBuffer(
+  sheetName: string,
+  headers: string[],
+  rows: (string | number | null)[][],
+): Promise<Buffer> {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Output Systems';
+  wb.created = new Date();
+  const ws = wb.addWorksheet(sheetName.slice(0, 31), {
+    views: [{ state: 'frozen', ySplit: 1 }],
+  });
+  ws.addRow(headers);
+  const headerRow = ws.getRow(1);
+  headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  headerRow.fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FF0A9D8B' },
+  };
+  headerRow.alignment = { vertical: 'middle', horizontal: 'left' };
+
+  for (const row of rows) {
+    ws.addRow(row);
+  }
+
+  // Auto-fit column widths based on content (capped at 60).
+  ws.columns.forEach((col, idx) => {
+    let max = headers[idx]?.length ?? 10;
+    for (const row of rows) {
+      const v = row[idx];
+      if (v === null || v === undefined) continue;
+      const len = String(v).length;
+      if (len > max) max = len;
+    }
+    col.width = Math.min(Math.max(max + 2, 12), 60);
+  });
+
+  const buffer = await wb.xlsx.writeBuffer();
+  return Buffer.from(buffer);
 }
 
 // -----------------------------------------------------------------------------

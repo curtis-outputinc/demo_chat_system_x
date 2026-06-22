@@ -64,6 +64,17 @@ export default async function LeadsList({
         <div className="flex items-center gap-3">
           <RangePicker basePath={`${base}/leads`} currentToken={rangeToken} />
           <a
+            href={`/api/admin/export/leads?range=${encodeURIComponent(rangeToken)}&format=xlsx`}
+            className="px-3 py-1.5 rounded-md text-xs font-semibold border"
+            style={{
+              borderColor: 'var(--admin-accent)',
+              background: 'var(--admin-accent)',
+              color: '#001210',
+            }}
+          >
+            Download XLSX
+          </a>
+          <a
             href={`/api/admin/export/leads?range=${encodeURIComponent(rangeToken)}`}
             className="px-3 py-1.5 rounded-md text-xs font-semibold border"
             style={{
@@ -72,7 +83,7 @@ export default async function LeadsList({
               color: 'var(--admin-fg)',
             }}
           >
-            Download CSV
+            CSV
           </a>
         </div>
       </header>
