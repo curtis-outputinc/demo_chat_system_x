@@ -52,6 +52,12 @@
   --admin-input-bg: #262626;
   --admin-input-border: #07e4c6;
   --admin-input-placeholder: rgba(255, 255, 255, 0.55);
+  /* Date range dropdown gets a solid black surface in dark mode so its white
+     text never lands on a translucent teal that reads as "light" against the
+     page background. Light mode keeps the baby teal for visual continuity
+     with the highlighted metric tile. */
+  --admin-range-bg: #000000;
+  --admin-range-fg: #ffffff;
 }
 
 .theme-light {
@@ -83,6 +89,11 @@
   --admin-input-bg: #ffffff;
   --admin-input-border: #0a9d8b;
   --admin-input-placeholder: rgba(0, 0, 0, 0.45);
+  /* Light mode date range dropdown: solid baby teal background so the dark
+     text reads cleanly and the surface still echoes the highlighted metric
+     tile. */
+  --admin-range-bg: #d6f7f1;
+  --admin-range-fg: #0a0a0a;
 }
 
 /* Inputs across the admin shell pick up the input-specific background. */
@@ -130,20 +141,21 @@ body {
   min-height: 100vh;
 }
 
-/* Admin font size scale: every Tailwind text class is bumped +1px from default
-   inside the admin shell, plus the arbitrary [10px] / [11px] / [13px] / [14px]
-   values used in the admin components. */
-.admin-shell .text-xs { font-size: 13px !important; }
-.admin-shell .text-sm { font-size: 15px !important; }
-.admin-shell .text-base { font-size: 17px !important; }
-.admin-shell .text-lg { font-size: 19px !important; }
-.admin-shell .text-xl { font-size: 21px !important; }
-.admin-shell .text-2xl { font-size: 25px !important; }
-.admin-shell .text-3xl { font-size: 31px !important; }
-.admin-shell .text-\[10px\] { font-size: 11px !important; }
-.admin-shell .text-\[11px\] { font-size: 12px !important; }
-.admin-shell .text-\[13px\] { font-size: 14px !important; }
-.admin-shell .text-\[14px\] { font-size: 15px !important; }
+/* Admin font size scale: every Tailwind text class is bumped +3px from default
+   inside the admin shell (was +1, bumped +2 more after user feedback that the
+   page text was too small for a demo viewer), plus the arbitrary [10px] /
+   [11px] / [13px] / [14px] values used in the admin components. */
+.admin-shell .text-xs { font-size: 15px !important; }
+.admin-shell .text-sm { font-size: 17px !important; }
+.admin-shell .text-base { font-size: 19px !important; }
+.admin-shell .text-lg { font-size: 21px !important; }
+.admin-shell .text-xl { font-size: 23px !important; }
+.admin-shell .text-2xl { font-size: 27px !important; }
+.admin-shell .text-3xl { font-size: 33px !important; }
+.admin-shell .text-\[10px\] { font-size: 13px !important; }
+.admin-shell .text-\[11px\] { font-size: 14px !important; }
+.admin-shell .text-\[13px\] { font-size: 16px !important; }
+.admin-shell .text-\[14px\] { font-size: 17px !important; }
 
 /* Print styles for the report viewer */
 @media print {

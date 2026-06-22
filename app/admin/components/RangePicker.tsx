@@ -42,9 +42,9 @@ export function RangePicker({ basePath, currentToken }: RangePickerProps) {
         onChange={(e) => setRange(e.target.value)}
         className="rounded-md px-3 py-1.5 text-xs font-semibold border outline-none focus:ring-2 focus:ring-[color:var(--admin-accent)]"
         style={{
-          background: 'var(--admin-accent-dim)',
+          background: 'var(--admin-range-bg)',
           borderColor: 'var(--admin-accent)',
-          color: 'var(--admin-fg)',
+          color: 'var(--admin-range-fg)',
         }}
       >
         {RANGES.map((r) => (
