@@ -210,8 +210,8 @@ async function runVolumeDaily(params: RecipeParams): Promise<RecipeResult> {
     total: points.reduce((acc, p) => acc + p.conversations, 0),
     series: [
       { name: 'conversations', data: points.map((p) => ({ name: p.date, value: p.conversations })) },
-      { name: 'messages', data: points.map((p) => ({ name: p.date, value: p.messages })) },
       { name: 'leads', data: points.map((p) => ({ name: p.date, value: p.leads })) },
+      { name: 'bookings', data: points.map((p) => ({ name: p.date, value: p.bookings })) },
     ],
     x_label: 'Date',
     y_label: 'Count',

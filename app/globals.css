@@ -39,7 +39,10 @@
   --admin-danger: #f87171;
   --admin-info: #60a5fa;
   --admin-chart-1: #07e4c6;
-  --admin-chart-2: #385ee6;
+  /* Royal blue #385ee6 was unreadable as lettering on black; using pink for
+     dark mode keeps the second-series color bright enough to read against
+     the page background. Light mode keeps the original royal blue. */
+  --admin-chart-2: #f472b6;
   --admin-chart-3: #fbbf24;
   --admin-chart-4: #f87171;
   --admin-chart-5: #c084fc;
@@ -47,7 +50,7 @@
   --admin-chart-text: #ffffff;
   /* Inputs get their own surface so the text box is visibly lifted off the page background. */
   --admin-input-bg: #262626;
-  --admin-input-border: rgba(255, 255, 255, 0.20);
+  --admin-input-border: #07e4c6;
   --admin-input-placeholder: rgba(255, 255, 255, 0.55);
 }
 
@@ -78,7 +81,7 @@
   --admin-chart-grid: rgba(0, 0, 0, 0.18);
   --admin-chart-text: #0a0a0a;
   --admin-input-bg: #ffffff;
-  --admin-input-border: rgba(0, 0, 0, 0.22);
+  --admin-input-border: #0a9d8b;
   --admin-input-placeholder: rgba(0, 0, 0, 0.45);
 }
 

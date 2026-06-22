@@ -338,10 +338,14 @@ export async function getLeadFunnel(
 export interface VolumePoint {
   date: string;
   conversations: number;
-  messages: number;
   leads: number;
+  bookings: number;
 }
 
+// Daily counts for the dashboard volume line chart. Returns conversations,
+// leads, and bookings per day. Messages used to be on this chart too but
+// pushed the Y-axis 10x higher than the others (one conversation = many
+// messages), making leads/bookings unreadable. Kept off this surface.
 export async function getConversationVolumeByDay(
   tenantId: string,
   start: Date,
@@ -350,7 +354,7 @@ export async function getConversationVolumeByDay(
   const supabase = getSupabaseService();
   const { data: convs } = await supabase
     .from('conversations')
-    .select('started_at, message_count')
+    .select('started_at')
     .eq('tenant_id', tenantId)
     .gte('started_at', start.toISOString())
     .lte('started_at', end.toISOString())
@@ -363,30 +367,30 @@ export async function getConversationVolumeByDay(
     .gte('created_at', start.toISOString())
     .lte('created_at', end.toISOString());
 
+  const { data: bookings } = await supabase
+    .from('bookings')
+    .select('created_at')
+    .eq('tenant_id', tenantId)
+    .gte('created_at', start.toISOString())
+    .lte('created_at', end.toISOString());
+
   const byDay = new Map<string, VolumePoint>();
-  for (const c of convs ?? []) {
-    const day = (c.started_at as string).slice(0, 10);
-    const existing = byDay.get(day);
-    if (existing) {
-      existing.conversations += 1;
-      existing.messages += (c.message_count as number) ?? 0;
-    } else {
-      byDay.set(day, {
-        date: day,
-        conversations: 1,
-        messages: (c.message_count as number) ?? 0,
-        leads: 0,
-      });
+  function ensureDay(day: string): VolumePoint {
+    let row = byDay.get(day);
+    if (!row) {
+      row = { date: day, conversations: 0, leads: 0, bookings: 0 };
+      byDay.set(day, row);
     }
+    return row;
+  }
+  for (const c of convs ?? []) {
+    ensureDay((c.started_at as string).slice(0, 10)).conversations += 1;
   }
   for (const l of leads ?? []) {
-    const day = (l.created_at as string).slice(0, 10);
-    const existing = byDay.get(day);
-    if (existing) {
-      existing.leads += 1;
-    } else {
-      byDay.set(day, { date: day, conversations: 0, messages: 0, leads: 1 });
-    }
+    ensureDay((l.created_at as string).slice(0, 10)).leads += 1;
+  }
+  for (const b of bookings ?? []) {
+    ensureDay((b.created_at as string).slice(0, 10)).bookings += 1;
   }
   return Array.from(byDay.values()).sort((a, b) => a.date.localeCompare(b.date));
 }

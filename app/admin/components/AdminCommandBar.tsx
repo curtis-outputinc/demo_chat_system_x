@@ -304,13 +304,32 @@ export function AdminCommandBar({ base }: { base: string }) {
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="px-4 py-2.5 rounded-lg text-sm font-semibold disabled:opacity-40 transition-opacity"
+          aria-label={loading ? 'Sending' : 'Send'}
+          title="Send"
+          className="rounded-lg p-2.5 disabled:opacity-40 transition-opacity inline-flex items-center justify-center"
           style={{
             background: 'var(--admin-accent)',
-            color: '#001210',
+            color: '#ffffff',
           }}
         >
-          {loading ? '…' : 'Go'}
+          {loading ? (
+            <span className="text-sm font-semibold">…</span>
+          ) : (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
+            </svg>
+          )}
         </button>
       </form>
       {feedback && (

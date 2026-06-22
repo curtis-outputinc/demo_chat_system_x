@@ -58,16 +58,19 @@ export function ChartTile({ title, subtitle, height = 240, children }: ChartTile
 }
 
 interface VolumeLineProps {
-  data: Array<{ date: string; conversations: number; messages: number; leads: number }>;
+  data: Array<{ date: string; conversations: number; leads: number; bookings: number }>;
 }
 
 export function VolumeLine({ data }: VolumeLineProps) {
   return (
-    <ChartTile title="Conversation volume over time" subtitle="Conversations, messages, leads per day" height={260}>
+    <ChartTile title="Daily volume" subtitle="Conversations, leads, and bookings per day" height={260}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--admin-chart-grid)" />
         <XAxis dataKey="date" tick={{ fill: 'var(--admin-chart-text)', fontSize: 13 }} />
-        <YAxis tick={{ fill: 'var(--admin-chart-text)', fontSize: 13 }} />
+        <YAxis
+          tick={{ fill: 'var(--admin-chart-text)', fontSize: 13 }}
+          allowDecimals={false}
+        />
         <Tooltip
           contentStyle={{
             background: 'var(--admin-bg-elevated)',
@@ -79,8 +82,8 @@ export function VolumeLine({ data }: VolumeLineProps) {
         />
         <Legend wrapperStyle={{ fontSize: 14, color: 'var(--admin-chart-text)' }} />
         <Line type="monotone" dataKey="conversations" stroke="var(--admin-chart-1)" strokeWidth={2} dot={false} />
-        <Line type="monotone" dataKey="messages" stroke="var(--admin-chart-2)" strokeWidth={2} dot={false} />
         <Line type="monotone" dataKey="leads" stroke="var(--admin-chart-3)" strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="bookings" stroke="var(--admin-chart-5)" strokeWidth={2} dot={false} />
       </LineChart>
     </ChartTile>
   );
