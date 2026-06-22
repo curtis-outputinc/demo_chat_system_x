@@ -13,10 +13,11 @@ import { sendChatLeadEmail, type ChatLeadPayload } from '@/lib/lead-email';
 export const runtime = 'nodejs';
 
 // In-chat lead capture marker. The chatbot emits this as the last line of its
-// final confirmation turn when it has collected name + email (+ optional phone)
-// via Option 1 of the locked two-option flow. The server strips it from the
-// visible output, parses the JSON between the markers, persists the lead,
-// and fires an email to the team via Resend.
+// final confirmation turn when it has collected the visitor's name plus at
+// least one contact method (phone preferred, email accepted) and optionally
+// a best-time-of-day for callback via the smooth statement-led flow. The
+// server strips it from the visible output, parses the JSON between the
+// markers, persists the lead, and fires an email to the team via Resend.
 const LEAD_MARKER_START = '<<<SUBMIT_LEAD>>>';
 const LEAD_MARKER_END = '<<<END_SUBMIT>>>';
 
@@ -328,14 +329,23 @@ function extractLeadPayload(text: string): ChatLeadPayload | null {
   try {
     const parsed = JSON.parse(jsonStr) as Record<string, unknown>;
     const name = typeof parsed.name === 'string' ? parsed.name.trim() : '';
-    const email = typeof parsed.email === 'string' ? parsed.email.trim() : '';
+    const email =
+      typeof parsed.email === 'string' && parsed.email.trim().length > 0
+        ? parsed.email.trim()
+        : null;
     const phone =
       typeof parsed.phone === 'string' && parsed.phone.trim().length > 0
         ? parsed.phone.trim()
         : null;
+    const bestTime =
+      typeof parsed.bestTime === 'string' && parsed.bestTime.trim().length > 0
+        ? parsed.bestTime.trim()
+        : null;
 
-    if (!name || !email) return null;
-    return { name, email, phone };
+    // The smooth flow requires a name plus at least one way to reach them.
+    // Phone is preferred but either is sufficient.
+    if (!name || (!email && !phone)) return null;
+    return { name, email, phone, bestTime };
   } catch (err) {
     console.warn('chat lead marker JSON parse failed', err);
     return null;
@@ -379,10 +389,11 @@ async function persistAndEmailChatLead(
     tenant_id: tenant.id,
     conversation_id: conversationId,
     name: payload.name,
-    email: payload.email,
-    phone: payload.phone,
+    email: payload.email ?? null,
+    phone: payload.phone ?? null,
     source: 'chatbot',
     status: 'new',
+    raw_payload: payload.bestTime ? { bestTime: payload.bestTime } : {},
   });
 
   if (insertError) {

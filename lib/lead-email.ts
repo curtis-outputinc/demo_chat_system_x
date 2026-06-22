@@ -1,13 +1,14 @@
 /**
  * Chat-captured lead email.
  *
- * Fires when the chatbot has collected name + email (+ optional phone) inside
- * the chat conversation and emitted the SUBMIT_LEAD marker. Sends a short
- * notification to connect@output.systems so the team can follow up directly.
+ * Fires when the chatbot has collected the visitor's name plus at least one
+ * contact method (phone preferred, email accepted) inside the chat
+ * conversation and emitted the SUBMIT_LEAD marker. Sends a short notification
+ * to connect@output.systems so the team can follow up directly.
  *
  * Different from handoff-email.ts: handoff fires only on actual Cal.com
- * bookings. This fires on in-chat lead capture (visitor picked Option 1 of
- * the locked two-option flow).
+ * bookings. This fires on in-chat lead capture from the smooth statement-led
+ * collection flow.
  */
 
 import { Resend } from 'resend';
@@ -25,8 +26,9 @@ function getResend(): Resend {
 
 export interface ChatLeadPayload {
   name: string;
-  email: string;
+  email?: string | null;
   phone?: string | null;
+  bestTime?: string | null;
   conversationId?: string | null;
 }
 
@@ -45,9 +47,14 @@ export async function sendChatLeadEmail(payload: ChatLeadPayload): Promise<void>
 
   const lines: string[] = [];
   lines.push(`Name: ${payload.name}`);
-  lines.push(`Email: ${payload.email}`);
   if (payload.phone && payload.phone.trim().length > 0) {
     lines.push(`Phone: ${payload.phone}`);
+  }
+  if (payload.email && payload.email.trim().length > 0) {
+    lines.push(`Email: ${payload.email}`);
+  }
+  if (payload.bestTime && payload.bestTime.trim().length > 0) {
+    lines.push(`Best time to reach: ${payload.bestTime}`);
   }
   lines.push('');
   lines.push('Captured directly inside the chatbot conversation, no booking yet.');
