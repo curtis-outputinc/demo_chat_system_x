@@ -88,6 +88,12 @@
   color: var(--admin-input-placeholder);
 }
 
+/* Theme-aware logo swap. logo.png is the dark-mode wordmark (light on dark);
+   logo-light.png is the light-mode wordmark (green mark + black wordmark on
+   white). The layout renders both and CSS hides whichever doesn't match. */
+.theme-dark .admin-logo-light { display: none; }
+.theme-light .admin-logo-dark { display: none; }
+
 html,
 body {
   background-color: var(--color-bg);

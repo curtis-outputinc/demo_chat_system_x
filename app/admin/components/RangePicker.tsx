@@ -16,6 +16,9 @@ interface RangePickerProps {
   currentToken: string;
 }
 
+// Native <select> dropdown styled to match the metric tile "baby teal" surface
+// (admin-accent-dim background, admin-accent border). Replaces the previous
+// row of buttons so the header reads cleaner with more whitespace.
 export function RangePicker({ basePath, currentToken }: RangePickerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,32 +30,29 @@ export function RangePicker({ basePath, currentToken }: RangePickerProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {RANGES.map((r) => {
-        const active = r.token === currentToken;
-        return (
-          <button
-            key={r.token}
-            onClick={() => setRange(r.token)}
-            className="px-3 py-1 rounded-md text-xs font-semibold border transition-colors"
-            style={
-              active
-                ? {
-                    background: 'var(--admin-accent)',
-                    borderColor: 'var(--admin-accent)',
-                    color: '#001210',
-                  }
-                : {
-                    background: 'var(--admin-bg-tile)',
-                    borderColor: 'var(--admin-border)',
-                    color: 'var(--admin-fg-muted)',
-                  }
-            }
-          >
+    <label className="inline-flex items-center gap-2 text-xs font-semibold">
+      <span
+        className="uppercase tracking-[0.15em]"
+        style={{ color: 'var(--admin-fg-subtle)' }}
+      >
+        Date range
+      </span>
+      <select
+        value={currentToken}
+        onChange={(e) => setRange(e.target.value)}
+        className="rounded-md px-3 py-1.5 text-xs font-semibold border outline-none focus:ring-2 focus:ring-[color:var(--admin-accent)]"
+        style={{
+          background: 'var(--admin-accent-dim)',
+          borderColor: 'var(--admin-accent)',
+          color: 'var(--admin-fg)',
+        }}
+      >
+        {RANGES.map((r) => (
+          <option key={r.token} value={r.token}>
             {r.label}
-          </button>
-        );
-      })}
-    </div>
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }

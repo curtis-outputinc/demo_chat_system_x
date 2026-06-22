@@ -15,6 +15,7 @@ import { SectionCard } from './components/SectionCard';
 import { MetricTile } from './components/MetricTile';
 import { EmptyState } from './components/EmptyState';
 import { RangePicker } from './components/RangePicker';
+import { GenerateReportMenu } from './components/GenerateReportMenu';
 import { VolumeLine, PagesBar, FunnelPie } from './components/ChartTile';
 
 export const dynamic = 'force-dynamic';
@@ -76,17 +77,7 @@ export default async function InsightsDashboard({
         </div>
         <div className="flex items-center gap-3">
           <RangePicker basePath={base || '/'} currentToken={rangeToken} />
-          <Link
-            href={`${base}/reports?range=${encodeURIComponent(rangeToken)}`}
-            className="px-3 py-1.5 rounded-md text-xs font-semibold border"
-            style={{
-              borderColor: 'var(--admin-accent)',
-              background: 'var(--admin-accent)',
-              color: '#001210',
-            }}
-          >
-            Generate AI report
-          </Link>
+          <GenerateReportMenu defaultRange={rangeToken} base={base} />
         </div>
       </header>
 

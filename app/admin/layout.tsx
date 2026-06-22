@@ -43,7 +43,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               alt="Output"
               width={140}
               height={42}
-              className="h-8 w-auto"
+              className="h-8 w-auto admin-logo-dark"
+              priority
+            />
+            <Image
+              src="/logo-light.png"
+              alt="Output"
+              width={140}
+              height={42}
+              className="h-8 w-auto admin-logo-light"
               priority
             />
             <span
