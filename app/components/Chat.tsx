@@ -244,6 +244,10 @@ export default function Chat({
   // Holds finalized transcript from prior auto-restart sessions so the
   // visible input survives restarts.
   const finalTranscriptRef = useRef('');
+  // Held MediaStream from getUserMedia. We keep the OS-level mic capture open
+  // for the entire recording so Chrome's start/stop chime fires only on user-
+  // initiated toggles, not on every internal SpeechRecognition restart.
+  const micStreamRef = useRef<MediaStream | null>(null);
 
   const { linkRegex, labelForUrl } = useMemo(() => buildLinkTools(config), [config]);
 
@@ -316,8 +320,17 @@ export default function Chat({
       } catch {
         // ignore
       }
+      releaseHeldMic();
     };
   }, []);
+
+  function releaseHeldMic() {
+    const stream = micStreamRef.current;
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+    }
+  }
 
   // Builds a fresh SpeechRecognition with continuous=true + an onend auto-restart
   // loop so the mic stays on across natural pauses until the user taps it off.
@@ -366,25 +379,49 @@ export default function Chat({
       finalTranscriptRef.current = appendNoOverlap(finalTranscriptRef.current, sessionFinals);
       sessionFinals = '';
       if (keepListeningRef.current) {
-        const next = createRecognition(SR);
-        recognitionRef.current = next;
-        try {
-          next.start();
-          return;
-        } catch (err) {
-          console.error('Failed to restart recognition:', err);
-          keepListeningRef.current = false;
-          setMicError('Voice input stopped. Tap the mic to try again.');
-          window.setTimeout(() => setMicError(null), 6000);
-        }
+        // Chrome's continuous mode still ends a session after brief silence.
+        // Calling start() synchronously in the same tick as onend often throws
+        // InvalidStateError because the underlying audio service hasn't fully
+        // released yet. Defer + retry with backoff so a single transient
+        // failure doesn't kill the whole listening loop.
+        scheduleRestart(SR, 0);
+      } else {
+        releaseHeldMic();
+        setIsRecording(false);
       }
-      setIsRecording(false);
     };
 
     return recognition;
   }
 
-  function toggleMic() {
+  // Spin up a fresh recognition instance and start it on the next tick.
+  // attempt counts prior failures; we back off and only give up after several.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function scheduleRestart(SR: any, attempt: number) {
+    const delays = [50, 150, 400, 1000];
+    const delay = delays[Math.min(attempt, delays.length - 1)];
+    window.setTimeout(() => {
+      if (!keepListeningRef.current) return;
+      const next = createRecognition(SR);
+      recognitionRef.current = next;
+      try {
+        next.start();
+      } catch (err) {
+        if (attempt < delays.length - 1) {
+          scheduleRestart(SR, attempt + 1);
+          return;
+        }
+        console.error('Failed to restart recognition after retries:', err);
+        keepListeningRef.current = false;
+        releaseHeldMic();
+        setIsRecording(false);
+        setMicError('Voice input stopped. Tap the mic to try again.');
+        window.setTimeout(() => setMicError(null), 6000);
+      }
+    }, delay);
+  }
+
+  async function toggleMic() {
     if (typeof window === 'undefined') return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
@@ -395,6 +432,20 @@ export default function Chat({
 
     if (isRecording) {
       stopRecording();
+      return;
+    }
+
+    // Acquire and hold the OS microphone for the whole session before kicking
+    // off recognition. Chrome plays its start/stop chime whenever the mic is
+    // acquired or released; holding our own MediaStream keeps that acquisition
+    // continuous across the SpeechRecognition restart cycle, so the chime only
+    // fires when the user toggles the mic.
+    try {
+      micStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.error('Mic permission denied:', err);
+      setMicError('Microphone access is blocked. Check your browser permissions.');
+      window.setTimeout(() => setMicError(null), 6000);
       return;
     }
 
@@ -409,6 +460,7 @@ export default function Chat({
     } catch (err) {
       console.error('Failed to start recognition:', err);
       keepListeningRef.current = false;
+      releaseHeldMic();
       setMicError('Could not start voice input. Try again.');
       window.setTimeout(() => setMicError(null), 6000);
     }
@@ -424,6 +476,7 @@ export default function Chat({
       try { r.onend = null; } catch { /* ignore */ }
       try { r.stop(); } catch { /* ignore */ }
     }
+    releaseHeldMic();
     setIsRecording(false);
   }
 
