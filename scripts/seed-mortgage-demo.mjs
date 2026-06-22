@@ -114,44 +114,56 @@ const TIME_OF_DAY_REPLIES = [
 
 function topicFirstTimeBuyer(slots) {
   const { city, downPaymentSituation } = slots;
+  const opener = pick([
+    `Hi, my partner and I want to buy our first place in ${city}. We have ${downPaymentSituation}. Where do we even start?`,
+    `hey, me and my partner are looking at buying our first home in ${city}. we have ${downPaymentSituation}. not sure where to start`,
+    `we want to buy our first home in ${city}, have ${downPaymentSituation} ready. what do we do first?`,
+  ]);
   return [
-    {
-      role: 'user',
-      content: `Hi, my partner and I are looking at buying our first place in ${city}. We have ${downPaymentSituation}. Where do we even start?`,
-    },
+    { role: 'user', content: opener },
     {
       role: 'assistant',
-      content: `Congrats, that is an exciting step. The first place to start is figuring out your maximum purchase price by getting pre-qualified, because that depends on your income, credit, debts, and the down payment you have ready. With less than twenty percent down the mortgage has to be default-insured, and there are specific minimums depending on the price. Are you both employed on regular T4 income, or is one of you self-employed?`,
+      content: `Nice, big step. The first thing to do is get pre-qualified. That tells you the max price you can shop at, based on your income, credit, savings, and any debts you have. With less than 20% down, your mortgage needs insurance, and the minimum down payment depends on the price. Are you both on regular paychecks, or is one of you self-employed?`,
     },
     {
       role: 'user',
-      content: `Both T4. What about the FHSA, is that something we should be using?`,
+      content: pick([
+        `Both on regular paychecks. What about the FHSA, should we be using that?`,
+        `both T4. is the FHSA something we should look at`,
+        `both salaried. how does the fhsa fit in`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Yes, definitely worth looking at if you have not already opened them. The First Home Savings Account lets each of you contribute up to eight thousand a year, up to a forty thousand lifetime max, and withdrawals for a first home purchase are tax free. Two people can combine, so as a couple you can pull out eighty thousand plus any growth, on top of what you can use from an RRSP under the Home Buyers' Plan. Have you opened FHSAs yet, or is this something you would be starting?`,
+      content: `Yes, if you haven't opened one already. The FHSA lets each of you put in up to $8,000 a year, with a $40,000 lifetime cap. When you pull the money out for your first home, it's tax free. As a couple you can stack up to $80,000 plus any growth, on top of what you can pull from your RRSP under the Home Buyers' Plan. Have you opened FHSAs yet?`,
     },
   ];
 }
 
 function topicRefinance(slots) {
   const { reason } = slots;
+  const opener = pick([
+    `I'm thinking about refinancing. ${reason}. Is now a good time?`,
+    `thinking about refinancing - ${reason}. is now a decent time?`,
+    `looking to refinance because ${reason}. good idea right now?`,
+  ]);
   return [
-    {
-      role: 'user',
-      content: `I'm thinking about refinancing. ${reason}. Is now a good time?`,
-    },
+    { role: 'user', content: opener },
     {
       role: 'assistant',
-      content: `It can be, but the right answer depends on a few things: how much is left on your current mortgage, the rate you are paying now, the penalty to break early if you are mid-term, and what you are trying to accomplish with the refinance. Refinancing in Canada lets you go up to eighty percent of your home's appraised value. Do you know roughly what your current rate is and where you are in your term?`,
+      content: `Depends on a few things: how much you still owe, the rate you're paying now, the penalty to break early if you're mid-term, and what you want the refinance to do for you. In Canada you can refinance up to 80% of your home's value. Do you know roughly what your current rate is and where you are in your term?`,
     },
     {
       role: 'user',
-      content: `We're about two years into a five year fixed at 5.4%. What's the break penalty likely to be?`,
+      content: pick([
+        `We're about two years into a five year fixed at 5.4%. What's the break penalty likely to be?`,
+        `about 2 years into a 5 year fixed at 5.4. how bad is the penalty usually`,
+        `2yrs into 5yr fixed @ 5.4%. what kind of penalty am i looking at`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `On a fixed mortgage with a major bank, the penalty is typically the greater of three months of interest or the Interest Rate Differential. The IRD can swing widely depending on how rates have moved since you signed, and the exact formula varies by lender. We can run actual numbers for you on a quick call, comparing the break-and-refinance math against staying put or doing a blend-and-extend.`,
+      content: `On a fixed mortgage with a big bank, the penalty is usually the higher of two numbers: three months of interest, or the IRD (the rate-difference penalty). The IRD can swing a lot based on how rates have moved since you signed, and every lender does it a bit differently. We can run real numbers for you on a quick call and compare staying put vs. breaking and refinancing.`,
     },
   ];
 }
@@ -160,19 +172,27 @@ function topicSelfEmployed(slots) {
   return [
     {
       role: 'user',
-      content: `I run my own business and my accountant writes off everything she can, so my reported income is low. Can I still get a mortgage?`,
+      content: pick([
+        `I run my own business and my accountant writes off everything she can, so my reported income is low. Can I still get a mortgage?`,
+        `self employed here. my accountant writes off a ton so my taxable income is low. can i still get a mortgage?`,
+        `i'm self-employed. accountant writes off as much as possible so on paper i look broke lol. is a mortgage doable?`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Yes, you have options. Traditional A lenders look at your Line 15000 income from your tax returns, so heavy write-offs can hurt qualifying there. But alternative lenders run programs where they evaluate twelve to twenty-four months of business bank statements and add back paper depreciation to get a truer picture of cash flow. A lenders typically want two years of operating history and clean Notice of Assessments showing no balance owing to CRA. How long has the business been running, and are your personal and corporate taxes filed up to date?`,
+      content: `Yes. Big banks usually look at the income on your tax return, so heavy write-offs can hurt you there. But alternative lenders run programs where they look at 12 to 24 months of business bank statements instead, and add back things like vehicle write-offs to get a real picture of your cash flow. Big banks usually want 2 years of business history and a clean tax record with no balance owing to CRA. How long has the business been running, and are your taxes filed and paid up?`,
     },
     {
       role: 'user',
-      content: `Business is four years old, taxes are clean. Personal income is around 45k on paper but the business actually does about 180k.`,
+      content: pick([
+        `Business is four years old, taxes are clean. Personal income is around 45k on paper but the business actually does about 180k.`,
+        `4 years in, taxes clean. paper income around 45k, real business does close to 180k`,
+        `business is 4yrs old, taxes paid up. shows 45k on my return but actually pulls in about 180k`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Good, that is a strong story to work with. Four years of operating history and a clean CRA profile clear the basics, and the gap between paper income and real cash flow is exactly what alternative bank statement programs are designed to handle. Real numbers come out of pulling your bank statements and a deeper look. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
+      content: `Good, that's a strong story to work with. Four years in business plus clean taxes covers the basics, and the gap between paper income and real cash flow is exactly what bank statement programs are built for. Real numbers come out of pulling your statements and taking a closer look. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -181,19 +201,27 @@ function topicBadCredit(slots) {
   return [
     {
       role: 'user',
-      content: `My credit score is around 580 after a rough year. Am I just out of luck on buying a home?`,
+      content: pick([
+        `My credit score is around 580 after a rough year. Am I just out of luck on buying a home?`,
+        `credit score is around 580 after a tough year. am i done as far as buying a home?`,
+        `my score is sitting around 580 right now. is buying a house basically off the table`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Not at all. With a score in that range, the major banks would likely decline, but alternative B lenders work specifically with credit profiles between 500 and 620 and look at the story behind the score, not just the number. They typically need at least twenty percent down because mortgage default insurance is reserved for prime lending. The plan is usually to use a one to three year alt mortgage to graduate back to an A lender once the credit is rebuilt. Do you know roughly how much you have saved for a down payment?`,
+      content: `Not at all. At that score, the big banks would likely say no, but B lenders work with scores from about 500 to 620 and care more about the story behind the number than the number itself. They usually need at least 20% down, because the kind of insurance that lets you put less down doesn't kick in at those scores. The usual play is to use a 1 to 3 year mortgage with them while you rebuild credit, and then move back to a big bank. How much do you have saved for a down payment?`,
     },
     {
       role: 'user',
-      content: `Around 60k. I'm looking at places in the 350-400k range.`,
+      content: pick([
+        `Around 60k. I'm looking at places in the 350-400k range.`,
+        `around 60k saved. places i'm looking at are 350-400k`,
+        `~60k. looking around 350-400k`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `That puts you in the ballpark, since sixty thousand is roughly fifteen to seventeen percent down at that price. To get to the twenty percent minimum that alternative lenders need, you would either need a bit more down or a gifted contribution from immediate family, or to look at slightly lower priced homes. This is the kind of file one of our brokers handles all the time. What's the best time of day for someone to reach out to you?`,
+      content: `That puts you close. 60k on a 350 to 400k home is about 15 to 17% down. To get to the 20% B lenders need, you'd either need a bit more saved, a gift from family, or to look at lower priced homes. This is the kind of file one of our brokers handles all the time. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -202,19 +230,27 @@ function topicReverseMortgage(slots) {
   return [
     {
       role: 'user',
-      content: `My parents are in their seventies, paid-off house in Mississauga worth maybe 1.2M. They want to free up cash but don't want to sell. Reverse mortgage?`,
+      content: pick([
+        `My parents are in their seventies, paid-off house in Mississauga worth maybe 1.2M. They want to free up cash but don't want to sell. Reverse mortgage?`,
+        `my parents are in their 70s, house in mississauga is paid off, worth around 1.2m. they want cash but don't want to sell. is a reverse mortgage worth looking at?`,
+        `parents are in their 70s, own a 1.2m place outright in mississauga. they want some cash without selling. reverse mortgage a fit?`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Reverse mortgages can be a good fit in exactly that situation. Homeowners aged 55 or older can convert up to fifty-five percent of their home equity to tax-free cash with no required monthly payments, and they keep full ownership of the home. The two main providers in Ontario are HomeEquity Bank with the CHIP product, and Equitable Bank. Interest accrues against the balance over time, so the math is different from a regular mortgage. Have they thought about how much they would want to access, or whether they would prefer a lump sum versus a line of credit style?`,
+      content: `Could be a good fit. People 55 or older can pull up to 55% of their home's value out as tax-free cash, with no monthly payments. They keep the house. The two main lenders in Ontario are HomeEquity Bank (the CHIP product) and Equitable Bank. Interest adds to the balance over time, so the math is different from a regular mortgage. Have they thought about how much they'd want to access, and whether they'd take it all at once or as a line of credit?`,
     },
     {
       role: 'user',
-      content: `They were thinking around 200k as a starting point.`,
+      content: pick([
+        `They were thinking around 200k as a starting point.`,
+        `they're thinking around 200k to start`,
+        `200k to start was the number they had in mind`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `That is well within range for a 1.2 million home and people in their seventies. The exact maximum depends on the age of the youngest borrower on title, the home's appraised value, and the property type. There is also a no-negative-equity guarantee so they can never owe more than the home is worth at sale. This is exactly something one of our brokers can walk them through properly. What's the best time of day for someone to reach out to them?`,
+      content: `That's well within range for a 1.2M home with people in their 70s. The exact max depends on the age of the youngest owner, the home's appraised value, and the property type. There's also a no-negative-equity guarantee, so they can never owe more than the home is worth when it sells. This is exactly something one of our brokers can walk them through. What's the best time of day for someone to reach out to them?`,
     },
   ];
 }
@@ -224,19 +260,27 @@ function topicRenewal(slots) {
   return [
     {
       role: 'user',
-      content: `My renewal is coming up in ${weeks} weeks and the bank sent me a letter with a rate that seems high. Should I just sign it?`,
+      content: pick([
+        `My renewal is coming up in ${weeks} weeks and the bank sent me a letter with a rate that seems high. Should I just sign it?`,
+        `renewal is in ${weeks} weeks, bank sent a letter with a rate that looks high. should i just sign or no?`,
+        `${weeks} weeks until renewal. the bank's offer feels high. sign it or shop around?`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Not without shopping first. Initial renewal letters typically show the bank's posted or standard retail rates, not their best discretionary rate. Renewing borrowers also have real leverage right now because both insured and uninsured borrowers can do a straight switch to a new lender without re-running the stress test. We can lock a rate hold up to one hundred and twenty days before your renewal date. What rate is the letter showing, and are you on a fixed or variable right now?`,
+      content: `Not without shopping first. Those letters usually show the bank's posted rate, not their best one. There's also a rule right now that lets you switch to a different lender at renewal without redoing the stress test, which gives you real leverage. We can hold a rate for you up to 120 days before your renewal date. What rate is the letter showing, and are you on a fixed or variable right now?`,
     },
     {
       role: 'user',
-      content: `Fixed, they're offering 5.79%. I'm at 4.49% right now.`,
+      content: pick([
+        `Fixed, they're offering 5.79%. I'm at 4.49% right now.`,
+        `fixed. they're offering 5.79 - i'm on 4.49 now`,
+        `5.79 fixed offered. currently at 4.49`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `That posted offer is well above what is being written in the market right now for a renewal of your size. We work with lenders who would be likely beating that materially on a straight switch with no extra qualification. The faster move is getting an actual competing quote in front of you. This is something one of our brokers handles every day. What's the best time of day for someone to reach out to you?`,
+      content: `That offer is well above where the market is on renewals your size right now. We work with lenders who would likely beat that by a decent chunk on a straight switch, with no extra paperwork. The fastest move is getting a real competing quote in front of you. This is something one of our brokers handles every day. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -245,19 +289,28 @@ function topicRateInquiry(slots) {
   return [
     {
       role: 'user',
-      content: `What's your best rate right now for a five year fixed?`,
+      content: pick([
+        `What's your best rate right now for a five year fixed?`,
+        `whats your best 5 year fixed rate?`,
+        `best 5yr fixed you can do right now?`,
+        `lowest rate you can get me on a 5 year fixed`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Honest answer is I cannot quote a specific rate here. Live rates move with market conditions and with the borrower's profile (credit, down payment, property type, insured vs uninsured, lender, term). What I can say is the spread between posted bank rates and what is actually written through brokers tends to be meaningful, especially on insured purchases and renewals. Are you looking at a purchase, refinance, or a renewal?`,
+      content: `Honest answer: I can't quote a rate here. Live rates move with the market and with your specific situation (credit, down payment, property type, insured or not, lender, term). What I can say is the gap between posted bank rates and what gets written through brokers is real, especially on insured purchases and renewals. Are you looking at a purchase, a refinance, or a renewal?`,
     },
     {
       role: 'user',
-      content: `Purchase, putting 20% down on a 700k condo in Toronto.`,
+      content: pick([
+        `Purchase, putting 20% down on a 700k condo in Toronto.`,
+        `purchase. 20% down on a 700k condo in toronto`,
+        `buying. toronto condo around 700k, 20% down`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Got it, conventional twenty percent down on a 700k Toronto condo is a clean profile and there is a competitive market for that file. Building characteristics also matter on a condo (reserve fund health, owner-occupied ratio, age of the building), so the right rate gets locked once we know the property. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
+      content: `Good profile. 20% down on a 700k Toronto condo is clean, and there's a lot of competition for files like that. The condo itself also matters (reserve fund, owner-occupied ratio, building age), so the final rate gets locked once we know the building. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -266,19 +319,27 @@ function topicConstruction(slots) {
   return [
     {
       role: 'user',
-      content: `We bought a lot in Halton and want to build a custom home, around 1.4M total cost. Looking for construction financing.`,
+      content: pick([
+        `We bought a lot in Halton and want to build a custom home, around 1.4M total cost. Looking for construction financing.`,
+        `bought a lot in halton. want to build, total cost around 1.4m. need construction financing`,
+        `we have a lot in halton and are building custom. 1.4m total. looking at construction loans`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Construction mortgages work differently from standard purchases. Funds get advanced in stages as construction milestones are hit, usually three to five draws across foundation, lockup, drywall, and completion. Ontario also has a mandatory ten percent lien holdback on every draw under the Construction Act, released sixty days after substantial completion if no liens are filed. Most prime lenders fund up to seventy-five or eighty percent of total cost on construction. Are you working with a Tarion-registered builder, or self-building?`,
+      content: `Construction mortgages work differently from regular ones. The money is released in stages as the build hits milestones, usually 3 to 5 draws (foundation, lockup, drywall, finished). In Ontario the lender also holds back 10% of every draw for 60 days after substantial completion, in case any subtrades file a lien. Most prime lenders fund up to 75 or 80% of the total build cost. Are you using a Tarion-registered builder, or building yourself?`,
     },
     {
       role: 'user',
-      content: `Tarion registered. Builder estimate is in.`,
+      content: pick([
+        `Tarion registered. Builder estimate is in.`,
+        `tarion-registered builder, estimate is in`,
+        `going with a tarion builder. estimate is done`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Good, that opens up traditional A-lender construction options. The other big requirement is a fixed-price contract with the builder, plus a contingency fund usually ten to twenty percent of the build cost in reserve for cost overruns. This is exactly the kind of file one of our brokers handles regularly. What's the best time of day for someone to reach out to you?`,
+      content: `Good, that opens up regular A-lender options. The other big thing they'll want is a fixed-price contract with the builder, plus 10 to 20% of the build cost set aside in case things go over. This is exactly the kind of file one of our brokers handles regularly. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -287,19 +348,27 @@ function topicPreapproval(slots) {
   return [
     {
       role: 'user',
-      content: `How does pre-approval work? My realtor is pushing me to get one before we keep looking.`,
+      content: pick([
+        `How does pre-approval work? My realtor is pushing me to get one before we keep looking.`,
+        `how does a pre-approval work? realtor is pushing me to get one`,
+        `whats the deal with pre-approval. our agent wants us to get one`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `A formal pre-approval is a full review of your income, credit, debts, and down payment by a lender, and locks in a specific rate hold (usually 90 to 120 days) so a market move doesn't hurt you. It is not the same as final approval. The lender still has to review the actual property before they fund. Your realtor is right that having one strengthens your offer, especially in competitive markets. Do you have a sense of price range and timeline, or are you still narrowing it down?`,
+      content: `A pre-approval is a full review of your income, credit, debts, and down payment, and it locks in a rate for 90 to 120 days so a market jump doesn't hurt you. It's not the same as final approval - the lender still needs to look at the actual home you choose. Your realtor is right that having one makes your offer stronger, especially in a busy market. Do you have a sense of your price range and timeline?`,
     },
     {
       role: 'user',
-      content: `Looking up to 800k, want to be in something by spring.`,
+      content: pick([
+        `Looking up to 800k, want to be in something by spring.`,
+        `up to 800k, hoping to be in a place by spring`,
+        `looking up to about 800. want to move by spring`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `That timeline gives you room to do this properly. To get a pre-approval moving we'd need a clean look at your last two pay stubs, employment letters, the last two Notices of Assessment, and proof of the down payment. That conversation usually takes about thirty minutes. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
+      content: `That timeline gives you room to do this right. To start a pre-approval we'd need your last two pay stubs, employment letters, your last two tax filings (Notices of Assessment), and proof of your down payment. The conversation usually takes about 30 minutes. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -308,19 +377,27 @@ function topicHELOC(slots) {
   return [
     {
       role: 'user',
-      content: `Considering pulling some equity out of our house to invest. How does a HELOC work?`,
+      content: pick([
+        `Considering pulling some equity out of our house to invest. How does a HELOC work?`,
+        `thinking about pulling equity from our home to invest. how does a heloc work`,
+        `want to pull some equity for investing. how do helocs work`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `A HELOC is a revolving line of credit secured against home equity, where you only pay interest on the amount actually drawn. As a standalone, it is capped at sixty-five percent loan to value of the home, but a combined mortgage and HELOC structure can go up to eighty percent loan to value as long as the revolving portion stays at sixty-five or below. There is also a specific Canadian strategy called the Smith Manoeuvre that uses a re-advanceable HELOC to convert non-deductible mortgage interest into tax-deductible investment loan interest. Are you using the equity strictly for investments, or also for renovations or debt consolidation?`,
+      content: `A HELOC is a line of credit tied to your home equity. You only pay interest on what you actually pull out. On its own it caps at 65% of your home's value, but if you combine it with a regular mortgage you can go up to 80%, as long as the line part stays at 65 or below. There's also a Canadian strategy called the Smith Manoeuvre that uses a special kind of HELOC to make the interest tax-deductible when the money is used for investments. Are you using the equity just for investing, or also for renos or paying down debt?`,
     },
     {
       role: 'user',
-      content: `Strictly investments. Pretty interested in the Smith Manoeuvre.`,
+      content: pick([
+        `Strictly investments. Pretty interested in the Smith Manoeuvre.`,
+        `just investing. smith manoeuvre is on my radar`,
+        `investments only. interested in the smith manoeuvre`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Good, that is exactly the use case it is built for, but the structural details are important to get right, especially around segregating the investment loan from personal balances so the CRA accepts the deduction. This is something one of our brokers walks people through regularly. What's the best time of day for someone to reach out to you?`,
+      content: `Good, that's exactly the use case it's built for. The setup details matter though, especially keeping the investment loan separate from personal balances so the CRA actually accepts the deduction. This is something one of our brokers walks people through often. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -329,19 +406,27 @@ function topicNewToCanada(slots) {
   return [
     {
       role: 'user',
-      content: `I moved to Canada from India eight months ago on a work permit. Can I buy a house here?`,
+      content: pick([
+        `I moved to Canada from India eight months ago on a work permit. Can I buy a house here?`,
+        `moved to canada from india 8 months ago on a work permit. can i buy a house here yet?`,
+        `i'm on a canadian work permit, been here 8 months. is it possible to buy a home?`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `Yes, and rules have changed in your favor recently. Under current regulations, temporary residents with a valid Canadian work permit can access insured financing (under twenty percent down) if they meet the same credit and employment rules a permanent resident would. There are also specific New to Canada programs through alternative lenders that put less weight on domestic credit history if you have a twenty percent down payment available. How long are you employed in Canada, and roughly how much do you have saved for a down payment?`,
+      content: `Yes, and the rules have changed in your favor recently. People on a Canadian work permit can get an insured mortgage (under 20% down) if they meet the same credit and employment rules a permanent resident would. There are also New to Canada programs through alternative lenders that don't lean as hard on your Canadian credit history if you have 20% down ready. How long have you been working in Canada, and roughly how much have you saved?`,
     },
     {
       role: 'user',
-      content: `Working at the same company since I arrived, full time T4. Saved around 75k.`,
+      content: pick([
+        `Working at the same company since I arrived, full time T4. Saved around 75k.`,
+        `same company since i arrived, full-time. saved about 75k`,
+        `been at the same job since i got here. about 75k saved`,
+      ]),
     },
     {
       role: 'assistant',
-      content: `That is a workable profile. Eight months of clean Canadian employment plus seventy-five thousand opens up options in both prime and alternative programs depending on the price point and where you are looking. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
+      content: `That's a workable profile. 8 months on the same job plus 75k saved opens up options in both regular and alternative programs, depending on the price point and the area. This is something one of our brokers can definitely help you with. What's the best time of day for someone to reach out to you?`,
     },
   ];
 }
@@ -350,49 +435,48 @@ function topicOutOfScope(slots) {
   // Visitor asks something off-corpus; assistant declines + redirects.
   const offerings = [
     {
-      user: `Can you give me legal advice on disputing a property assessment?`,
-      assistant: `I'm not able to give legal advice on a property assessment dispute, that one needs a real estate lawyer who can review the assessment and the appeal process for your municipality. We can absolutely help with anything mortgage related though, refinancing, renewals, equity takeout. Is there a mortgage angle I can help with?`,
+      user: `can you give me legal advice on disputing a property assessment?`,
+      assistant: `That one needs a real estate lawyer, not us. The appeal process is different in every city. We're happy to help with anything mortgage related though, like refinancing, renewals, or pulling equity out. Is there anything on that side I can help with?`,
     },
     {
-      user: `What stocks should I invest in right now?`,
-      assistant: `That is not something I can advise on, investment advice needs to come from a licensed financial advisor who knows your overall picture. We're here for the mortgage side. Is there anything mortgage related I can help with?`,
+      user: `what stocks should I invest in right now?`,
+      assistant: `Not something I can help with. That's a question for a licensed financial advisor who knows your full picture. We stick to the mortgage side. Anything mortgage related I can help with?`,
     },
     {
-      user: `Can you tell me the exact penalty if I break my mortgage today?`,
-      assistant: `Exact penalty numbers depend on your specific lender's IRD calculation, your contract rate, current posted rates, and the time remaining, so the only way to get an accurate figure is to call your lender or look at your most recent annual statement. We can walk through the math on a call once you have it. Want me to set that up?`,
+      user: `can you tell me the exact penalty if I break my mortgage today?`,
+      assistant: `Exact penalty numbers depend on your lender, your contract rate, today's posted rates, and how much time is left on your term. The only way to get the real number is to call your lender or check your latest statement. Once you have it, we can walk through the math on a call. Want me to set one up?`,
       flagged: true,
     },
   ];
-  return offerings[Math.floor(Math.random() * offerings.length)].user
-    ? (() => {
-        const choice = offerings[Math.floor(Math.random() * offerings.length)];
-        return [
-          { role: 'user', content: choice.user },
-          {
-            role: 'assistant',
-            content: choice.assistant,
-            flagged: choice.flagged === true,
-          },
-        ];
-      })()
-    : [];
+  const choice = offerings[Math.floor(Math.random() * offerings.length)];
+  return [
+    { role: 'user', content: choice.user },
+    {
+      role: 'assistant',
+      content: choice.assistant,
+      flagged: choice.flagged === true,
+    },
+  ];
 }
 
 function topicShortInquiry() {
   // Short visitor exits — abandoned conversation.
   const inquiries = [
-    'Just looking, thanks',
-    'Do you guys do mortgages?',
+    'just looking, thanks',
+    'do you guys do mortgages?',
     'hi',
     'what hours are you open',
     'mortgage rates?',
+    'do you do renewals',
+    'hey',
+    'are you guys real',
   ];
   const choice = inquiries[Math.floor(Math.random() * inquiries.length)];
   return [
     { role: 'user', content: choice },
     {
       role: 'assistant',
-      content: `Hi, yes, mortgages are exactly what we work on, everything from first-time purchases to refinancing, renewals, self-employed files, and alternative situations. What's bringing you here today?`,
+      content: `Hey, yes, mortgages are what we do. First-time purchases, refinancing, renewals, self-employed files, all of it. What's bringing you here today?`,
     },
   ];
 }
@@ -493,24 +577,26 @@ function randomVisitorId() {
 
 function downPaymentSituation() {
   const options = [
-    'about 45k saved up between us',
+    'about 45k saved between us',
     '70k from a recent inheritance',
-    'roughly 30k saved and our parents might help with another 20',
-    'a gift of 50k from family plus 25k of our own',
+    'around 30k saved, our parents might help with another 20',
+    'a 50k gift from family plus 25k of our own',
     'around 100k from selling our old place',
-    'about 25k saved and we are not sure if that is enough',
+    'about 25k saved, not sure if that\'s enough',
+    'roughly 60k between savings and a gift',
   ];
   return pick(options);
 }
 
 function refinanceReason() {
   const options = [
-    'rates are different now and our renewal is two years out',
-    'we want to consolidate some credit card debt',
-    'kitchen needs a redo and we would rather not use a credit line',
+    "rates are different now and we still have a couple years to go",
+    'we want to roll some credit card debt into the mortgage',
+    "the kitchen needs a redo and we'd rather not use a credit line",
     'thinking about pulling equity to buy a rental',
-    'we want to pay off a car loan that is eating our budget',
-    'we just want to access some equity for general flexibility',
+    "we want to pay off a car loan that's eating our budget",
+    'just want to pull some equity for flexibility',
+    "rates have moved and we're curious what's possible",
   ];
   return pick(options);
 }
@@ -528,7 +614,7 @@ function completeConversation(baseTurns, terminalState, slots) {
     turns.push({ role: 'user', content: pick(TIME_OF_DAY_REPLIES) });
     turns.push({
       role: 'assistant',
-      content: `Awesome. Two quick things before I pass this along: I forgot to ask your name earlier, what can I call you? And what's the best phone number for us to reach you at?`,
+      content: `Awesome. Two quick things before I pass this along. I forgot to ask your name earlier, what's your name? And what's the best phone number to reach out to you? It'll be a no-obligation call, just to chat through your situation.`,
     });
     turns.push({
       role: 'user',
@@ -536,53 +622,64 @@ function completeConversation(baseTurns, terminalState, slots) {
     });
     turns.push({
       role: 'assistant',
-      content: `Got it, thanks ${slots.visitor.name.split(' ')[0]}. I'll pass this along to our team and one of our brokers will reach out at the time you mentioned. Anything else you want them to know before the call?`,
+      content: `Got it, thanks ${slots.visitor.name.split(' ')[0]}. I'll pass this along and one of our brokers will reach out around the time you mentioned. Anything you'd want them to know ahead of the call?`,
     });
 
     if (terminalState === 'booked') {
       turns.push({
         role: 'user',
-        content: `Actually I'd rather just pick a time directly if I can.`,
+        content: pick([
+          `actually i'd rather just pick a time myself if i can`,
+          `can i just book a time directly?`,
+          `is there a link i can use to pick the time myself`,
+        ]),
       });
       turns.push({
         role: 'assistant',
-        content: `Of course. You can pick a time that works for you here: https://cal.com/output-systems/mortgage. We'll be ready for you.`,
+        content: `Of course. You can pick a time that works for you here: https://cal.com/output-systems/mortgage. We'll be ready when you are.`,
       });
     } else {
       turns.push({
         role: 'user',
         content: pick([
           'no that covers it, thank you',
-          "just that we'd prefer to talk to someone soon",
-          'we are pre-approved with another lender but want a second opinion',
-          'just want straight talk, no pressure',
+          "just that we'd like to talk soon",
+          `we have a pre-approval with another lender, just want a second look`,
+          `nothing else really, just straight talk would be great`,
+          `nope thanks`,
+          `just keen to get going`,
         ]),
       });
       turns.push({
         role: 'assistant',
-        content: `Perfect, I'll include that in the brief. Talk soon.`,
+        content: pick([
+          `Perfect, I'll add that to the note. Talk soon.`,
+          `Got it. Talk soon.`,
+          `Sounds good. We'll be in touch.`,
+        ]),
       });
     }
   } else if (terminalState === 'abandoned') {
-    // Just stop after the last assistant turn, sometimes with a flagged
-    // last visitor message (one-word reply).
+    // Just stop after the last assistant turn, sometimes with a short visitor reply.
     if (Math.random() < 0.3) {
-      turns.push({ role: 'user', content: pick(['ok', 'thx', 'hmm', 'sure', '?']) });
+      turns.push({ role: 'user', content: pick(['ok', 'thx', 'hmm', 'sure', '?', 'k', 'cool']) });
     }
   } else if (terminalState === 'unanswered') {
     // Add an unanswered visitor question at the end.
     turns.push({
       role: 'user',
       content: pick([
-        'do you have a calculator for the exact penalty on my specific mortgage?',
-        'what is the absolute lowest rate i could possibly get tomorrow',
-        'can you tell me which specific lender will approve my file',
-        'is my house value going to go up next year',
+        'do you have a calculator for the exact penalty on my mortgage?',
+        'what is the lowest rate i could possibly get tomorrow',
+        'can you tell me which lender will approve my file for sure',
+        'is my house going to go up in value next year',
+        'will i be approved',
+        `whats the cheapest rate possible right now`,
       ]),
     });
     turns.push({
       role: 'assistant',
-      content: `Honestly that one needs a real review of your file (and in some cases external data we do not have on hand). One of our brokers can dig into specifics on a call. Want me to set that up?`,
+      content: `Honestly that one needs a real look at your file. One of our brokers can dig in on a quick, no-obligation call. Want me to set one up?`,
       flagged: true,
     });
   }
