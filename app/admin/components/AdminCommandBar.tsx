@@ -36,15 +36,9 @@ export function AdminCommandBar({ base }: { base: string }) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Ctor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    // Hide the voice button on touch-primary devices. Web Speech API is
-    // unreliable on mobile Chrome (chime fires on every session, continuous
-    // mode does not work, etc.). Same rationale as Chat.tsx.
-    const isTouchPrimary =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(pointer: coarse)').matches;
-    setSpeechSupported(Boolean(Ctor) && !isTouchPrimary);
+    // Voice input intentionally disabled across every device until we ship
+    // server-side STT. See Chat.tsx for the full rationale.
+    setSpeechSupported(false);
   }, []);
 
   function startListening() {
