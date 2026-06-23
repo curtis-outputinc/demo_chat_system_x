@@ -36,9 +36,9 @@ export function AdminCommandBar({ base }: { base: string }) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // Voice input intentionally disabled across every device until we ship
-    // server-side STT. See Chat.tsx for the full rationale.
-    setSpeechSupported(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Ctor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    setSpeechSupported(Boolean(Ctor));
   }, []);
 
   function startListening() {

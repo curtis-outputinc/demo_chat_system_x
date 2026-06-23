@@ -239,15 +239,12 @@ export default function Chat({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   // Stays true between user mic-toggle clicks. onend uses it to decide
-  // whether to auto-restart after Chromium ends the session.
+  // whether to auto-restart after Chromium ends the session (which it does
+  // every few seconds on silence, even with continuous=true).
   const keepListeningRef = useRef(false);
   // Holds finalized transcript from prior auto-restart sessions so the
   // visible input survives restarts.
   const finalTranscriptRef = useRef('');
-  // Held MediaStream from getUserMedia. We keep the OS-level mic capture open
-  // for the entire recording so Chrome's start/stop chime fires only on user-
-  // initiated toggles, not on every internal SpeechRecognition restart.
-  const micStreamRef = useRef<MediaStream | null>(null);
 
   const { linkRegex, labelForUrl } = useMemo(() => buildLinkTools(config), [config]);
 
@@ -309,16 +306,10 @@ export default function Chat({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // Voice input intentionally disabled across every device until we ship
-    // server-side STT. Web Speech API cannot be made reliable here: the
-    // start/stop chime is OS-level on mobile Chrome and cannot be
-    // suppressed, continuous mode is inconsistent, and the desktop chime
-    // workaround can starve the recognizer of audio access on some
-    // browsers. Hiding the feature outright is the only behavior that is
-    // guaranteed not to embarrass the demo. The recognition handler code
-    // below is left in place so flipping this back on (or replacing with a
-    // MediaRecorder-based path) is a one-line edit later.
-    setSpeechSupported(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    const SR = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    setSpeechSupported(!!SR);
 
     return () => {
       try {
@@ -326,20 +317,24 @@ export default function Chat({
       } catch {
         // ignore
       }
-      releaseHeldMic();
     };
   }, []);
 
-  function releaseHeldMic() {
-    const stream = micStreamRef.current;
-    if (stream) {
-      stream.getTracks().forEach((t) => t.stop());
-      micStreamRef.current = null;
-    }
-  }
-
   // Builds a fresh SpeechRecognition with continuous=true + an onend auto-restart
-  // loop so the mic stays on across natural pauses until the user taps it off.
+  // loop so the mic stays on across natural pauses until the user taps it off
+  // (or hits send).
+  //
+  // Result handling has to deal with two browser dialects:
+  //   - Incremental (most desktop Chrome): each entry in event.results is a
+  //     distinct utterance, and the right move is to concatenate them.
+  //   - Cumulative (some mobile Chrome / Safari builds): each new final entry
+  //     contains the ENTIRE session transcript so far, growing every event.
+  //     Concatenating these produces "okayokay sookay so I..." explosions.
+  //
+  // The resolver rebuilds finals from scratch per event: when the next final
+  // starts with the prior accumulator, treat it as cumulative (replace),
+  // otherwise treat it as incremental (append). collapseConsecutive and
+  // appendNoOverlap remain as belt-and-suspenders for residual duplicates.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function createRecognition(SR: any) {
     const recognition = new SR();
@@ -347,7 +342,8 @@ export default function Chat({
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 
-    // Tracks finalized (and deduped) text from THIS session only.
+    // Tracks finalized (and deduped) text from THIS session only. onend folds
+    // it into finalTranscriptRef before restarting.
     let sessionFinals = '';
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -369,15 +365,27 @@ export default function Chat({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event?.error, event);
-      if (event?.error === 'not-allowed' || event?.error === 'service-not-allowed') {
+      const code: string = event?.error ?? 'unknown';
+      console.error('Speech recognition error:', code, event);
+      if (code === 'not-allowed' || code === 'service-not-allowed') {
         keepListeningRef.current = false;
         setMicError('Microphone access is blocked. Check your browser permissions.');
         window.setTimeout(() => setMicError(null), 6000);
-      } else if (event?.error === 'audio-capture') {
+      } else if (code === 'audio-capture') {
         keepListeningRef.current = false;
         setMicError('No microphone found on this device.');
         window.setTimeout(() => setMicError(null), 6000);
+      } else if (code === 'network') {
+        keepListeningRef.current = false;
+        setMicError('Voice input network error. Check your connection and try again.');
+        window.setTimeout(() => setMicError(null), 6000);
+      } else if (code === 'no-speech' || code === 'aborted') {
+        // Transient — let onend auto-restart, no toast.
+      } else {
+        // Surface anything else so browser-specific failures (e.g. Edge using
+        // a different recognition backend) become diagnosable instead of silent.
+        setMicError(`Voice input error: ${code}. Tap the mic to try again.`);
+        window.setTimeout(() => setMicError(null), 8000);
       }
     };
 
@@ -385,49 +393,25 @@ export default function Chat({
       finalTranscriptRef.current = appendNoOverlap(finalTranscriptRef.current, sessionFinals);
       sessionFinals = '';
       if (keepListeningRef.current) {
-        // Chrome's continuous mode still ends a session after brief silence.
-        // Calling start() synchronously in the same tick as onend often throws
-        // InvalidStateError because the underlying audio service hasn't fully
-        // released yet. Defer + retry with backoff so a single transient
-        // failure doesn't kill the whole listening loop.
-        scheduleRestart(SR, 0);
-      } else {
-        releaseHeldMic();
-        setIsRecording(false);
+        const next = createRecognition(SR);
+        recognitionRef.current = next;
+        try {
+          next.start();
+          return;
+        } catch (err) {
+          console.error('Failed to restart recognition:', err);
+          keepListeningRef.current = false;
+          setMicError('Voice input stopped. Tap the mic to try again.');
+          window.setTimeout(() => setMicError(null), 6000);
+        }
       }
+      setIsRecording(false);
     };
 
     return recognition;
   }
 
-  // Spin up a fresh recognition instance and start it on the next tick.
-  // attempt counts prior failures; we back off and only give up after several.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function scheduleRestart(SR: any, attempt: number) {
-    const delays = [50, 150, 400, 1000];
-    const delay = delays[Math.min(attempt, delays.length - 1)];
-    window.setTimeout(() => {
-      if (!keepListeningRef.current) return;
-      const next = createRecognition(SR);
-      recognitionRef.current = next;
-      try {
-        next.start();
-      } catch (err) {
-        if (attempt < delays.length - 1) {
-          scheduleRestart(SR, attempt + 1);
-          return;
-        }
-        console.error('Failed to restart recognition after retries:', err);
-        keepListeningRef.current = false;
-        releaseHeldMic();
-        setIsRecording(false);
-        setMicError('Voice input stopped. Tap the mic to try again.');
-        window.setTimeout(() => setMicError(null), 6000);
-      }
-    }, delay);
-  }
-
-  async function toggleMic() {
+  function toggleMic() {
     if (typeof window === 'undefined') return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
@@ -437,21 +421,13 @@ export default function Chat({
     setMicError(null);
 
     if (isRecording) {
-      stopRecording();
-      return;
-    }
-
-    // Acquire and hold the OS microphone for the whole session before kicking
-    // off recognition. Chrome plays its start/stop chime whenever the mic is
-    // acquired or released; holding our own MediaStream keeps that acquisition
-    // continuous across the SpeechRecognition restart cycle, so the chime only
-    // fires when the user toggles the mic.
-    try {
-      micStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch (err) {
-      console.error('Mic permission denied:', err);
-      setMicError('Microphone access is blocked. Check your browser permissions.');
-      window.setTimeout(() => setMicError(null), 6000);
+      keepListeningRef.current = false;
+      try {
+        recognitionRef.current?.stop();
+      } catch {
+        // ignore
+      }
+      setIsRecording(false);
       return;
     }
 
@@ -466,39 +442,9 @@ export default function Chat({
     } catch (err) {
       console.error('Failed to start recognition:', err);
       keepListeningRef.current = false;
-      releaseHeldMic();
       setMicError('Could not start voice input. Try again.');
       window.setTimeout(() => setMicError(null), 6000);
     }
-  }
-
-  function stopRecording() {
-    keepListeningRef.current = false;
-    const r = recognitionRef.current;
-    if (r) {
-      // Detach handlers so any in-flight or post-stop browser events don't
-      // call setInput and refill the box after the message has been sent.
-      try { r.onresult = null; } catch { /* ignore */ }
-      try { r.onend = null; } catch { /* ignore */ }
-      try { r.stop(); } catch { /* ignore */ }
-    }
-    releaseHeldMic();
-    setIsRecording(false);
-  }
-
-  // Send the current input. Used by both the Send button and the Enter key.
-  // Captures content first, then aggressively clears every place voice input
-  // can leak back into the visible textbox: stops the recognizer (and detaches
-  // its handlers), wipes the accumulated transcript ref, and empties the input
-  // state. Without this triple-clear, voice continues feeding the box after
-  // send because SpeechRecognition delivers final results asynchronously.
-  function submitMessage() {
-    const content = input;
-    if (!content.trim() || isLoading) return;
-    if (isRecording) stopRecording();
-    finalTranscriptRef.current = '';
-    setInput('');
-    sendMessage(content);
   }
 
   async function sendMessage(content: string) {
@@ -625,15 +571,7 @@ export default function Chat({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        submitMessage();
-      }}
-      onKeyDown={(e) => {
-        // Send on Enter even when focus sits on the mic button (clicking the
-        // mic moves focus there, so Enter would otherwise just toggle it off).
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          submitMessage();
-        }
+        sendMessage(input);
       }}
       className="flex flex-row gap-2"
     >
