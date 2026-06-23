@@ -312,7 +312,20 @@ export default function Chat({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
     const SR = w.SpeechRecognition ?? w.webkitSpeechRecognition;
-    setSpeechSupported(!!SR);
+    // Mobile Chrome's Web Speech API is unreliable in practice: the system
+    // start/stop chime cannot be suppressed (it's OS-level, tied to the
+    // SpeechRecognition lifecycle, not OS mic capture), continuous mode
+    // often ignores `continuous=true` after a single utterance, and the
+    // getUserMedia workaround that silences the chime on desktop can block
+    // SpeechRecognition from getting audio access on mobile entirely. Rather
+    // than chase another platform-specific hack, hide the mic on touch
+    // devices so it cannot embarrass the demo. Desktop voice still works.
+    // If reliable mobile voice ever becomes a requirement, the right fix is
+    // server-side STT (MediaRecorder -> Whisper/Deepgram), not Web Speech.
+    const isTouchPrimary =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: coarse)').matches;
+    setSpeechSupported(!!SR && !isTouchPrimary);
 
     return () => {
       try {
