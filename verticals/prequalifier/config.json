@@ -1,0 +1,45 @@
+{
+  "brandName": "Mortgage Prequalifier Demo",
+  "trade": "mortgage broker",
+  "productName": "intelligent prequalification system",
+  "accentColor": "#1ae0cb",
+  "contactFlow": "book-and-share",
+  "layout": "split",
+  "theme": "light",
+  "heroImage": "/images/injury-lawyer/lawyer-handshake.jpg",
+  "logoPath": "/logo-light.png",
+  "logoDark": "/logo.png",
+  "siteUrl": "https://prequalify.output.systems",
+  "bookingUrl": "https://cal.com/output-systems",
+  "privacyUrl": "",
+  "consentText": "",
+  "modes": {
+    "client": {
+      "label": "Borrower side",
+      "blurb": "Walk through a real prequalification as if you were a borrower",
+      "greeting": "Hi, glad you stopped by. I can walk you through a quick prequalification so we know what kind of mortgage might fit your situation. Want to tell me a little about what you are looking at, or would you rather I ask the questions one at a time?",
+      "chips": [
+        "I am looking to buy my first home",
+        "I want to refinance or pull equity",
+        "I am self-employed, can you still prequalify me?",
+        "I have had some credit issues, do I have options?"
+      ]
+    },
+    "professional": {
+      "label": "Broker side",
+      "blurb": "See how this would work on your own website",
+      "greeting": "Hey, take a look around. This is a working prequalifier you can drop onto your own site. It runs a borrower through a real intake, scores the file on the back end, and sends you a clean summary so you only spend time on files worth your time. Ask me how any piece of that works.",
+      "chips": [
+        "How does the prequalification scoring work?",
+        "What does the broker handoff look like?",
+        "Can it handle alt and private lending scenarios?",
+        "What does it cost to set up?"
+      ]
+    }
+  },
+  "approvedLinks": [],
+  "disclaimer": {
+    "checkbox": "This AI prequalifier provides general information only. It is not a mortgage approval, a commitment, or financial, legal, or tax advice.",
+    "footer": "AI prequalification systems we build for mortgage brokers are custom-designed to comply with the jurisdiction the broker is licensed to operate in."
+  }
+}
