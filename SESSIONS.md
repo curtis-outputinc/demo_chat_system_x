@@ -651,3 +651,155 @@ request (Immigration Law Demo, Injury Law Demo, Mortgage Broker Demo, Realtor
 Demo). No hub redeploy needed; the hub queries the tenants table at request
 time.
 
+## 2026-06-26 — Prequalify dashboard, behavior fix, contractor vertical
+
+Three deliverables in a single overnight session.
+
+### 1. Prequalify dashboard — live at prequalify-dashboard.output.systems
+
+New standalone Next.js 16 read-only dashboard for the prequalifier
+transcripts. Lives in its own repo folder: `C:/Projects/06_prequalify_dashboard/`.
+Reads the prequalifier Supabase (`wttjenjvgyssbxmdtzsw`… no, that's
+contractor — prequalifier is `eqkdwxqtwmgeraaoylml`). Does NOT touch the
+engine.
+
+Surface:
+- `/` Conversations view: 3 KPI tiles, line chart of volume over time,
+  transcript list + drill-in pane
+- `/leads` Leads view: list of captured leads with name / phone / email /
+  best-time, clicking a lead opens its source transcript
+- Top nav switches between Conversations and Leads
+- Date range picker, dark / light theme toggle
+- "Ask AI" command bar (top right) with Anthropic tool-use loop: can
+  summarize, list transcripts, fetch a single thread, compute top topic
+  word frequencies, and render pie / bar / line charts inline on demand
+
+Routes:
+- `GET /` (static), `GET /leads` (static)
+- `GET /api/data?range=<preset>` Conversations payload
+- `GET /api/leads?range=<preset>` Leads payload
+- `GET /api/transcript?id=<uuid>` Single thread
+- `POST /api/chat` Anthropic tool-use loop
+
+Vercel project: `prequalify-dashboard` (curtis-outputincs-projects). Custom
+domain wired to `prequalify-dashboard.output.systems`. Envs in production:
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`,
+`TENANT_SLUG=prequalifier`.
+
+Lesson learned: do NOT pre-create the Vercel project with `vercel project
+add`. That sets Framework Preset = "Other" and the build serves 404. Always
+`vercel deploy --prod --yes` from the folder so the CLI auto-detects
+Next.js. Memory note saved.
+
+Patched in passing: `conversations.message_count` is never written by the
+chat engine's `persistTurn`, so the dashboard derives counts from the
+messages table. Real engine fix is still pending in `04_demo_chat_system_x`.
+
+### 2. Prequalify chatbot — intent detection fix (live)
+
+Reported issue: `prequalify.output.systems` opened every reply with the
+qualification batch ("where is the property, and is it primary / second /
+investment") even when the visitor asked an informational question like
+"can you give me info on HELOCs?".
+
+Fix: rewrote `verticals/prequalifier/behaviors.md` to read intent BEFORE
+launching the qualification flow. Two intents now formally distinguished:
+
+- Informational: "what is X", "how does Y work", "how long does Z take",
+  "info on…" — bot answers the question, optionally does a small country
+  clarifier only when the answer differs by country
+- Transactional: "I want to refinance", "I'm trying to get a HELOC", "can
+  you help me qualify" — bot runs the full prequalification flow
+
+Sections updated to gate on transactional intent:
+- First-turn opener structure
+- Jurisdiction qualification
+- Product questions (HELOC / refinance / reverse mortgage / second mortgage)
+- "Borrower side: how to run the prequalification"
+
+Smoke test post-deploy: "can you give me info on Helocs?" now returns a
+real HELOC explanation (revolving credit, 65 / 80 LTV caps, variable
+rates) ending with "Want me to go deeper on any part of that, or were you
+mostly curious how it works?" No more property-location interrogation.
+
+### 3. Contractor vertical — scaffolded and deployed (empty corpus)
+
+New vertical covering plumbing, HVAC, and electrical trades under one
+brand. Many real contractors do more than one trade, so they're lumped
+rather than three separate demos. Live at `contractor.output.systems`.
+
+Files added:
+- `verticals/contractor/config.json` — "Contractor Demo" brand, two
+  modes ("Customer side" / "Contractor side"), chips covering all three
+  trades
+- `verticals/contractor/behaviors.md` — identity, trade detection by
+  keyword (plumbing / HVAC / electrical), emergency response pattern
+  (gas smell → leave + 911 + then book; sparking outlet → kill breaker;
+  active flood → main shutoff), tone, hard rules (no specific pricing,
+  no diagnostic-by-chat, no DIY repair steps), client + contractor
+  side guidance, explicit "when the corpus is empty" instructions so
+  the bot stays useful pre-corpus
+- `verticals/contractor/SETUP.md` — full setup runbook
+- `verticals/contractor/corpus/_README.md` — list of corpus files to
+  drop in once content is ready (corpus is intentionally empty for now)
+- `.env.contractor.local` — env reference template at repo root
+- `supabase/contractor/seed-tenant.sql` — tenant insert
+- `supabase/contractor/README.md` — apply order
+
+Infrastructure:
+- Supabase: dedicated project `contractor-chat-demo`, project ref
+  `wttjenjvgyssbxmdtzsw`. Base migrations + contractor tenant seed
+  applied. Tenant row verified via REST.
+- Vercel: new project `demo-contractor`. All 5 envs set in production
+  (VERTICAL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY,
+  NEXT_PUBLIC_SITE_URL). Deployed at
+  `demo-contractor-el32w1ffe-curtis-outputincs-projects.vercel.app` and
+  aliased to `contractor.output.systems`.
+- DNS: Hostinger CNAME `contractor` → `cname.vercel-dns.com`.
+
+Live smoke test:
+- `GET /` → 200
+- `POST /api/chat` with "my water heater is leaking" → bot replied:
+  "That's definitely something we want to look at quickly. A leaking
+  water heater can range from a minor drip at a valve to something
+  more serious, and it's worth knowing how bad the leak is right now.
+  Is water actively pooling or flowing, or is it more of a slow drip?"
+  Exactly the urgency-aware triage pattern the behaviors file defined.
+
+Outstanding for this vertical:
+- Drop the real corpus markdown into `verticals/contractor/corpus/`
+  when content is ready. Files starting with `_` are ignored, so
+  `_README.md` stays in place. Recommended files listed in that README.
+- After corpus drops, redeploy from a folder linked to demo-contractor
+  with `vercel deploy --prod --yes`.
+
+### Local Vercel link housekeeping
+
+The repo folder's `.vercel/project.json` was linked to demo-insurancebroker
+at the start of the session. To run a contractor deploy, the .vercel
+folder was renamed to `.vercel.insurancebroker_bak`. After the contractor
+project was created, the folder relinked itself to demo-contractor.
+Restoring the original link is left as a follow-up — `vercel link
+--project demo-insurancebroker --yes` from the repo root any time, or
+just rename `.vercel.insurancebroker_bak` back over `.vercel`.
+
+### Issues encountered
+
+- IDE save conflict on `.env.contractor.local`: Claude wrote the
+  Anthropic key from the chat side while the user had the file open,
+  which triggered "The content of the file is newer." in the IDE. The
+  user re-pasted Supabase values into chat and Claude wrote them
+  directly. Resolved.
+- Vercel framework auto-detection only fires on `vercel deploy`, not
+  `vercel project add`. Same lesson as the dashboard project; noted in
+  the dashboard infra memory.
+
+### Next session pickup points
+
+1. Drop contractor corpus when content is ready, redeploy.
+2. Engine fix: have `persistTurn` increment `conversations.message_count`
+   so the prequalify dashboard does not have to derive it.
+3. Engine fix: persist mode toggles (Client / Broker) on the conversation
+   so the prequalify dashboard's transcript view can show inline mode
+   markers. User asked for this but the engine does not write the field.
+

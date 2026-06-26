@@ -1,0 +1,41 @@
+{
+  "brandName": "Contractor Demo",
+  "trade": "contractor",
+  "productName": "intelligent website chat system",
+  "accentColor": "#1ae0cb",
+  "contactFlow": "book-and-share",
+  "layout": "centered",
+  "theme": "dark",
+  "heroImage": "",
+  "logoPath": "/logo.png",
+  "logoDark": "/logo_white.png",
+  "siteUrl": "https://contractor.output.systems",
+  "bookingUrl": "https://cal.com/output-systems",
+  "privacyUrl": "",
+  "consentText": "",
+  "modes": {
+    "client": {
+      "label": "Customer side",
+      "blurb": "Ask what your customers would ask",
+      "greeting": "Hi, glad you stopped by. We handle plumbing, HVAC, and electrical work for homes and small commercial across Canada and the US. What is going on at your place today?",
+      "chips": [
+        "My water heater is leaking",
+        "My AC stopped cooling",
+        "An outlet stopped working in my kitchen",
+        "Do you handle after-hours emergencies?"
+      ]
+    },
+    "professional": {
+      "label": "Contractor side",
+      "blurb": "See how this would work on your own website",
+      "greeting": "Hey, take a look around. This is a working intelligent chat system built for trade contractors who run plumbing, HVAC, or electrical shops (or all three). It handles inbound from your website around the clock, screens the timewasters, books real service calls, and flags emergencies so they reach you fast. Ask me how any piece of that works.",
+      "chips": [
+        "How does it handle emergency calls?",
+        "Can it screen out tire-kickers?",
+        "How does the booking flow work?",
+        "What does it cost to set up?"
+      ]
+    }
+  },
+  "approvedLinks": []
+}
