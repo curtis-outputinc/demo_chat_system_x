@@ -245,6 +245,10 @@ export default function Chat({
   // Holds finalized transcript from prior auto-restart sessions so the
   // visible input survives restarts.
   const finalTranscriptRef = useRef('');
+  // Holds an explicit getUserMedia audio stream while the mic is on, so the
+  // OS keeps the mic "in use" across SpeechRecognition restarts. This is what
+  // suppresses Chrome's built-in acquire / release chimes. Stopped on toggle-off.
+  const micStreamRef = useRef<MediaStream | null>(null);
 
   const { linkRegex, labelForUrl } = useMemo(() => buildLinkTools(config), [config]);
 
@@ -314,6 +318,12 @@ export default function Chat({
     return () => {
       try {
         recognitionRef.current?.abort();
+      } catch {
+        // ignore
+      }
+      try {
+        micStreamRef.current?.getTracks().forEach((t) => t.stop());
+        micStreamRef.current = null;
       } catch {
         // ignore
       }
@@ -397,6 +407,8 @@ export default function Chat({
         recognitionRef.current = next;
         try {
           next.start();
+          // Mic stream is intentionally held across the restart so Chrome
+          // does not play its end-of-session and start-of-session chimes.
           return;
         } catch (err) {
           console.error('Failed to restart recognition:', err);
@@ -405,13 +417,29 @@ export default function Chat({
           window.setTimeout(() => setMicError(null), 6000);
         }
       }
+      // Session is fully over: release the held mic stream.
+      try {
+        micStreamRef.current?.getTracks().forEach((t) => t.stop());
+      } catch {
+        // ignore
+      }
+      micStreamRef.current = null;
       setIsRecording(false);
     };
 
     return recognition;
   }
 
-  function toggleMic() {
+  function releaseMicStream() {
+    try {
+      micStreamRef.current?.getTracks().forEach((t) => t.stop());
+    } catch {
+      // ignore
+    }
+    micStreamRef.current = null;
+  }
+
+  async function toggleMic() {
     if (typeof window === 'undefined') return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
@@ -427,7 +455,26 @@ export default function Chat({
       } catch {
         // ignore
       }
+      releaseMicStream();
       setIsRecording(false);
+      return;
+    }
+
+    // Acquire and hold the OS mic BEFORE starting SpeechRecognition. Chrome
+    // plays its acquire / release chime only when the OS-level mic state
+    // changes. By holding a getUserMedia stream open across the entire
+    // recognition session (including auto-restarts), the chime never fires.
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      setMicError('Voice input is not supported in this browser.');
+      window.setTimeout(() => setMicError(null), 6000);
+      return;
+    }
+    try {
+      micStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.error('Failed to acquire microphone:', err);
+      setMicError('Microphone access is blocked. Check your browser permissions.');
+      window.setTimeout(() => setMicError(null), 6000);
       return;
     }
 
@@ -442,6 +489,7 @@ export default function Chat({
     } catch (err) {
       console.error('Failed to start recognition:', err);
       keepListeningRef.current = false;
+      releaseMicStream();
       setMicError('Could not start voice input. Try again.');
       window.setTimeout(() => setMicError(null), 6000);
     }

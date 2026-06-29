@@ -33,6 +33,10 @@ export function AdminCommandBar({ base }: { base: string }) {
   const recognitionRef = useRef<any>(null);
   const userStoppedRef = useRef(false);
   const finalTranscriptRef = useRef('');
+  // Holds an explicit getUserMedia audio stream while the mic is on, so the
+  // OS keeps the mic "in use" across SpeechRecognition restarts. Suppresses
+  // Chrome's built-in acquire / release chimes.
+  const micStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -41,10 +45,30 @@ export function AdminCommandBar({ base }: { base: string }) {
     setSpeechSupported(Boolean(Ctor));
   }, []);
 
-  function startListening() {
+  function releaseMicStream() {
+    try {
+      micStreamRef.current?.getTracks().forEach((t) => t.stop());
+    } catch {
+      // ignore
+    }
+    micStreamRef.current = null;
+  }
+
+  async function startListening() {
     if (typeof window === 'undefined') return;
     const Ctor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!Ctor) return;
+
+    // Acquire and hold the OS mic before starting SpeechRecognition so Chrome
+    // does not play its acquire / release chimes around each restart cycle.
+    if (!navigator?.mediaDevices?.getUserMedia) return;
+    try {
+      micStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.warn('command bar mic access blocked', err);
+      return;
+    }
+
     const recognizer = new Ctor();
     recognizer.lang = 'en-US';
     recognizer.continuous = true;
@@ -81,6 +105,7 @@ export function AdminCommandBar({ base }: { base: string }) {
           /* ignore */
         }
       } else {
+        releaseMicStream();
         setIsRecording(false);
       }
     };
@@ -103,6 +128,7 @@ export function AdminCommandBar({ base }: { base: string }) {
         /* ignore */
       }
     }
+    releaseMicStream();
     setIsRecording(false);
   }
 
