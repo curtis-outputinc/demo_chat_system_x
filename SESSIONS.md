@@ -803,3 +803,151 @@ just rename `.vercel.insurancebroker_bak` back over `.vercel`.
    so the prequalify dashboard's transcript view can show inline mode
    markers. User asked for this but the engine does not write the field.
 
+## 2026-06-29 — Prequalifier length tightening + prequalifier_RS (Robert Silipo demo) launch
+
+Three deliverables in one session.
+
+### 1. Prequalifier reply length tightened
+
+Replies were running 4-5 sentences too often. Rewrote the length
+rules in `verticals/prequalifier/behaviors.md`:
+
+- Yes/no questions: one short sentence (or just "yes"/"no" when obvious)
+- Normal questions: 2-3 sentences, the default
+- Questions needing more context: up to 4 sentences, never 5+
+- Calibration ("familiar" / "walk me through") now bounded by the
+  new range too
+
+Added a self-check: "would removing a sentence still let the
+visitor understand the answer? If yes, remove it." Five places
+referencing "2 to 5 sentences" were rewritten in one pass.
+
+Live on prequalify.output.systems. Smoke tests:
+- "do you handle reverse mortgages?" → 2-sentence yes with privacy
+  line + intent-aware follow-up
+- "how does a HELOC work?" → 4-sentence factual explanation with
+  Canadian caps + open follow-up
+
+### 2. prequalifier_RS vertical — Robert Silipo's demo
+
+Robert Silipo (note the spelling: S-I-L-I-P-O, the website is
+authoritative) is a real mortgage broker. He gets his own
+branded demo at https://rs-mortgage-solutions.output.systems.
+
+Setup:
+- `verticals/prequalifier_RS/` started as an exact duplicate of
+  `verticals/prequalifier/`. The slug is `prequalifier_RS` (with
+  underscore and capital R-S, deliberate).
+- `config.json` swaps in brandName "RS Mortgage Solutions" and
+  siteUrl `https://rs-mortgage-solutions.output.systems`.
+  Everything else (corpus, behaviors, modes, accent color) was
+  carried over unchanged.
+- `supabase/prequalifier_RS/seed-tenant.sql` inserts the
+  `prequalifier_RS` tenant row into the existing prequalifier
+  Supabase. Sharing for speed; can be split off to a dedicated
+  Supabase later.
+- New Vercel project `demo-prequalifier-rs` in
+  curtis-outputincs-projects.
+- All 5 envs set in production: VERTICAL=prequalifier_RS,
+  SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (same as the existing
+  prequalifier Supabase), ANTHROPIC_API_KEY (shared), and
+  NEXT_PUBLIC_SITE_URL=https://rs-mortgage-solutions.output.systems.
+- Hostinger CNAME for `rs-mortgage-solutions` → `cname.vercel-dns.com`
+  is in place, attached to the project, SSL cert provisioned.
+
+### 3. Robert's website context captured to corpus
+
+All public pages of rsmortgagesolutions.ca scraped and written to
+`verticals/prequalifier_RS/corpus/website_context.md`. Verbatim
+text in blockquotes so the bot picks up Robert's voice without
+parroting:
+
+- Home page (with all four testimonials in full and the operational
+  facts block)
+- About page (hero, multi-disciplinary approach, why clients
+  choose, services list, service area)
+- Services overview page (9 service blurbs)
+- Alternative Lending page (with the B-Lender FAQ Q+A verbatim)
+- First-Time Home Buyer page
+- Private Mortgages page (with private mortgage FAQ Q+A verbatim)
+- Mortgage Refinance page
+- Reverse Mortgages page
+- Bad Credit Mortgage page
+- Self-Employed Mortgages page
+- Service Areas page (with the three sub-region groupings: Durham
+  Core, GTA, Western GTA & Halton/Peel)
+- Contact page (canonical phone, email, address, hours; agent info
+  with FSRA + MA license numbers)
+
+Two service-menu pages were not scraped (Renewals/Switch,
+Construction/Land Loans) because the user did not provide those
+URLs. Their short blurbs from the services overview already cover
+basic questions; full pages can be added later.
+
+Plus a new `government-and-industry-resources.md` file aggregating:
+- CMHC Purchase program (full premium schedule, LTV tiers, GDS/TDS
+  limits, down payment rules, $1.5M max purchase price, 30-year
+  amortization eligibility, credit score floor 600)
+- CMHC Government of Canada programs for homebuyers (HBP, FHSA,
+  GST/HST rebate, Home Buyers' Amount overview)
+- CREA REALTOR vs real estate agent (code of ethics, MLS, FINTRAC
+  obligations, why mortgage agents and REALTORS work alongside)
+
+Three canada.ca URLs (FCAC buying-home, FCAC mortgages, CRA
+first-time GST/HST rebate) returned 403 from the WebFetch tool;
+their substance is already covered by existing corpus files
+(first-time-buyer-faqs, ontario-hst-new-housing-rebate,
+cmhc-mortgage-loan-insurance, osfi-mqr-uninsured-mortgages). Noted
+in the file for a future scrape pass.
+
+### Corpus audit (requested by user)
+
+User asked to confirm coverage of laws/regulations behind:
+construction loans, self-employed mortgages, first-time home
+buyers. All three are well-covered:
+
+- Construction loans: `Knowledge Base/construction-loan-faqs.md`
+  has a dedicated Category 6 on the Ontario Construction Act
+  (10% statutory holdback), plus Tarion warranty, HCRA builder
+  licensing, owner-builder exemption, construction lien rules.
+- Self-employed: `Knowledge Base/self-employed-mortgage-faqs.md`
+  + `jurisdictions/CA/cmhc-self-employed-program.md` (federal CMHC
+  rules) + OSFI B-20 / MQR files.
+- First-time buyers: `Knowledge Base/first-time-buyer-faqs.md`
+  covers FHSA, HBP, Ontario LTT rebate, 30-year amortization.
+  Plus the CA-ON jurisdiction files on land transfer tax, HST
+  new housing rebate, and NRST.
+
+Optional follow-up: no standalone `jurisdictions/CA/fhsa-*.md` or
+`hbp-*.md` files exist (the topics live inside the FAQ). Could
+add canonical files if desired; not blocking.
+
+### Live smoke test (post-deploy)
+
+`POST /api/chat` with "what are your hours?" on
+rs-mortgage-solutions.output.systems →
+
+> We're open Monday to Friday, 9:00 AM to 6:00 PM. Evenings and
+> weekends are available by appointment. Want to book a time to
+> chat, or is there something I can help you with right now?
+
+Two-sentence answer with the exact hours from the contact page +
+soft pivot to booking. Length rule + website context both working.
+
+### Next session pickup points
+
+1. Robert's site has 2 more service pages we haven't scraped
+   (Renewals/Switch, Construction/Land Loans) if their URLs come
+   in.
+2. Try the chat-onboarder Playwright crawler for the 3 canada.ca
+   URLs that 403'd the WebFetch tool.
+3. User flagged a content inconsistency on Robert's site:
+   "20+ years real estate investing" (home page) vs "15+ years
+   land development" (services page). Both are now in the corpus
+   verbatim. If user wants the bot to standardize one, the
+   behavior rule belongs in behaviors.md, not the corpus.
+4. Consider whether prequalifier_RS should move to its own
+   dedicated Supabase project later (currently shares the
+   prequalifier Supabase with the main demo). Split is a config
+   + env swap once Robert wants real client transcripts isolated.
+
