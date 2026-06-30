@@ -37,11 +37,9 @@ export function AdminCommandBar({ base }: { base: string }) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    setSpeechSupported(
-      typeof navigator !== 'undefined' &&
-        !!navigator.mediaDevices?.getUserMedia &&
-        typeof MediaRecorder !== 'undefined',
-    );
+    // Voice input intentionally disabled here too. See Chat.tsx for the
+    // rationale. To re-enable, restore the previous detection logic.
+    setSpeechSupported(false);
     return () => {
       try {
         mediaRecorderRef.current?.stop();

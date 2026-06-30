@@ -303,9 +303,13 @@ export default function Chat({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // Voice input now uses MediaRecorder + getUserMedia (no SpeechRecognition,
-    // so no Chrome bell on silence). Supported anywhere getUserMedia is.
-    setSpeechSupported(typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia);
+    // Voice input intentionally disabled. The browser Web Speech API plays a
+    // chime on every recognition session end (including silence-driven mobile
+    // restarts), and the alternative server-side STT path requires an
+    // additional vendor key the team is not paying for. Mic is hidden until
+    // a clean approach lands. To re-enable, set this to:
+    //   setSpeechSupported(typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia);
+    setSpeechSupported(false);
 
     return () => {
       try {

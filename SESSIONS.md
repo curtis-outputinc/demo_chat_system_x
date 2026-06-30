@@ -1016,3 +1016,57 @@ live demo records audio again. Custom-domain aliases re-pointed.
 - All 9 demos recording audio (with Chrome chime back)
 - QR code page reachable at /qr/<demoId> for each of the 9 demos
 
+## 2026-06-30 — Voice input hidden across all 9 demos
+
+The user repeatedly asked for "bell only on button press, never on
+silence pause" on mobile. Several iterations attempted to deliver
+this:
+
+1. Original Web Speech API + onend auto-restart: bell on every
+   silence pause (worst).
+2. Removed the auto-restart: bell at start and at natural end. Still
+   not "only on button press" because the natural-end bell fires on
+   silence, not user action.
+3. getUserMedia trick to hold the mic open: silenced the chime but
+   broke recording (held-open MediaStream starved SpeechRecognition).
+4. Rewrote to MediaRecorder + OpenAI Whisper: would have delivered
+   exactly the user's spec (zero browser-played bells on any path)
+   but requires an OpenAI API key the user explicitly declined.
+
+The honest summary the user got: on mobile Chrome, the Web Speech
+API has a hard-coded acquire/release tone that fires every time
+Chrome ends the session, and Chrome ends the session on each
+prolonged silence even with `continuous=true`. The only way to
+deliver "no bells on silence" on mobile is to abandon SpeechRecognition
+and use server-side STT (Whisper, Groq, Cloudflare AI, etc.). The
+user is not paying for that vendor for now.
+
+Decision: hide the mic button across all 9 demos until a clean
+approach is funded. `app/components/Chat.tsx` and
+`app/admin/components/AdminCommandBar.tsx` now force
+`setSpeechSupported(false)` in their feature-detection useEffect.
+All other voice code (MediaRecorder, getUserMedia, /api/transcribe
+route) is intentionally left in place so re-enabling is a one-line
+revert of the setSpeechSupported call.
+
+Redeployed to all 9 demo Vercel projects. The chat input still
+works for keyboard typing on every demo; the mic icon is gone.
+
+### Re-enabling later
+
+To restore voice input with the silent MediaRecorder + server STT
+approach:
+1. Set `OPENAI_API_KEY` (or Groq / Cloudflare equivalent) on every
+   demo Vercel project.
+2. Optionally swap the upstream URL in `/api/transcribe/route.ts` if
+   not using OpenAI.
+3. Revert the `setSpeechSupported(false)` line in both Chat.tsx and
+   AdminCommandBar.tsx back to the feature-detection logic that's
+   commented above the override.
+
+To restore the Web Speech API approach (accepting the mobile bell):
+1. Revert the `setSpeechSupported(false)` line.
+2. Replace the MediaRecorder-based toggleMic with the prior
+   SpeechRecognition implementation (search git history for the
+   `recognitionRef` removal commit).
+
