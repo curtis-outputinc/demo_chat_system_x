@@ -951,3 +951,68 @@ soft pivot to booking. Length rule + website context both working.
    prequalifier Supabase with the main demo). Split is a config
    + env swap once Robert wants real client transcripts isolated.
 
+## 2026-06-29 (late) — Demos hub at demos.output.systems + mic chime trade-off
+
+### 1. Mic chime suppression attempt (reverted)
+
+Tried suppressing Chrome's SpeechRecognition acquire/release chime by
+holding a `navigator.mediaDevices.getUserMedia({audio:true})` stream
+open across the recognition session. The chime did go silent, but
+Chrome's SpeechRecognition then captured no audio (held-open
+MediaStream and SpeechRecognition compete for the mic input). User
+tested live and reported "mic turns red but nothing is recorded."
+
+Reverted both `app/components/Chat.tsx` and
+`app/admin/components/AdminCommandBar.tsx` to the original behavior.
+The chime is back, but recording works. Documented in commit.
+
+Open question for a future pass: pre-acquire getUserMedia, register a
+recognition.onstart handler that stops the held tracks once
+SpeechRecognition has the mic, and re-acquire on the auto-restart
+cycle. Untested.
+
+### 2. Demos hub expanded to all 9 verticals at demos.output.systems
+
+Hub now lists every demo, not just the three with custom domains.
+`ANALYTICS_DEMOS` env var was extended to include:
+- Mortgage Prequalifier Demo (prequalify.output.systems)
+- RS Mortgage Solutions (rs-mortgage-solutions.output.systems)
+- Contractor Demo (contractor.output.systems)
+- Mortgage Broker Demo (demo-mortgagebroker.vercel.app)
+- Insurance Broker Demo (demo-insurancebroker.vercel.app)
+- Financial Advisor Demo (demo-financialadvisor.vercel.app)
+- Injury Law Demo (demo-injurylaw.vercel.app)
+- Immigration Law Demo (demo-immigrationlaw.vercel.app)
+- Realtor Demo (demo-realtor-dun.vercel.app)
+
+The six new verticals all share the demo Supabase
+(iypkjckvrgfnijvfpuyy). The two prequalifier flavors share their own
+dedicated Supabase (eqkdwxqtwmgeraaoylml). Contractor has its own
+(wttjenjvgyssbxmdtzsw).
+
+### 3. Per-tile QR code page
+
+Each tile in Demos mode now has two buttons:
+
+- "Open chat" - opens demo.siteUrl in a new tab
+- "QR code" - navigates to /qr/[demoId]
+
+The new `/qr/[demoId]` route renders a large QR code that anyone can
+scan to open the demo on their phone. Uses the `qrcode` npm package
+to render SVG client-side (no third-party API dependency).
+
+Bottom of the QR page has an "Open demo" button and a "Back to demos"
+link.
+
+### 4. Engine redeploy
+
+The mic revert was redeployed to all 9 demo Vercel projects so every
+live demo records audio again. Custom-domain aliases re-pointed.
+
+### Live state
+
+- demos.output.systems = hub
+- demo-analytics.output.systems = aliased to the same project, still works
+- All 9 demos recording audio (with Chrome chime back)
+- QR code page reachable at /qr/<demoId> for each of the 9 demos
+
