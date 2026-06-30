@@ -390,21 +390,14 @@ export default function Chat({
     };
 
     recognition.onend = () => {
+      // NEVER auto-restart on silence. Each restart triggers Chrome's
+      // acquire/release tone, which is the "bell every few seconds on
+      // pause" the user has been hearing. Recognition ends naturally when
+      // the user pauses; the captured text stays in the input. To dictate
+      // more, the user taps the mic again.
       finalTranscriptRef.current = appendNoOverlap(finalTranscriptRef.current, sessionFinals);
       sessionFinals = '';
-      if (keepListeningRef.current) {
-        const next = createRecognition(SR);
-        recognitionRef.current = next;
-        try {
-          next.start();
-          return;
-        } catch (err) {
-          console.error('Failed to restart recognition:', err);
-          keepListeningRef.current = false;
-          setMicError('Voice input stopped. Tap the mic to try again.');
-          window.setTimeout(() => setMicError(null), 6000);
-        }
-      }
+      keepListeningRef.current = false;
       setIsRecording(false);
     };
 

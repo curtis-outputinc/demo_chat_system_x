@@ -74,15 +74,10 @@ export function AdminCommandBar({ base }: { base: string }) {
       console.warn('command bar speech error', event.error);
     };
     recognizer.onend = () => {
-      if (!userStoppedRef.current) {
-        try {
-          recognizer.start();
-        } catch {
-          /* ignore */
-        }
-      } else {
-        setIsRecording(false);
-      }
+      // Never auto-restart on silence; that triggers Chrome's bell on each
+      // restart. Recognition ends naturally; user re-taps mic to dictate more.
+      userStoppedRef.current = true;
+      setIsRecording(false);
     };
 
     recognitionRef.current = recognizer;
