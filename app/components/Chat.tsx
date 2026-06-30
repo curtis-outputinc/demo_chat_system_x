@@ -236,15 +236,12 @@ export default function Chat({
     return () => mq.removeEventListener('change', update);
   }, []);
   const lastUserMessageRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
-  // Stays true between user mic-toggle clicks. onend uses it to decide
-  // whether to auto-restart after Chromium ends the session (which it does
-  // every few seconds on silence, even with continuous=true).
-  const keepListeningRef = useRef(false);
-  // Holds finalized transcript from prior auto-restart sessions so the
-  // visible input survives restarts.
-  const finalTranscriptRef = useRef('');
+  // MediaRecorder + getUserMedia: silent capture (no browser-played bells),
+  // upload to /api/transcribe (Whisper) when the user taps the mic again.
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const micStreamRef = useRef<MediaStream | null>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
 
   const { linkRegex, labelForUrl } = useMemo(() => buildLinkTools(config), [config]);
 
@@ -306,135 +303,148 @@ export default function Chat({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-    const SR = w.SpeechRecognition ?? w.webkitSpeechRecognition;
-    setSpeechSupported(!!SR);
+    // Voice input now uses MediaRecorder + getUserMedia (no SpeechRecognition,
+    // so no Chrome bell on silence). Supported anywhere getUserMedia is.
+    setSpeechSupported(typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia);
 
     return () => {
       try {
-        recognitionRef.current?.abort();
+        mediaRecorderRef.current?.stop();
+      } catch {
+        // ignore
+      }
+      try {
+        micStreamRef.current?.getTracks().forEach((t) => t.stop());
       } catch {
         // ignore
       }
     };
   }, []);
 
-  // Builds a fresh SpeechRecognition with continuous=true + an onend auto-restart
-  // loop so the mic stays on across natural pauses until the user taps it off
-  // (or hits send).
-  //
-  // Result handling has to deal with two browser dialects:
-  //   - Incremental (most desktop Chrome): each entry in event.results is a
-  //     distinct utterance, and the right move is to concatenate them.
-  //   - Cumulative (some mobile Chrome / Safari builds): each new final entry
-  //     contains the ENTIRE session transcript so far, growing every event.
-  //     Concatenating these produces "okayokay sookay so I..." explosions.
-  //
-  // The resolver rebuilds finals from scratch per event: when the next final
-  // starts with the prior accumulator, treat it as cumulative (replace),
-  // otherwise treat it as incremental (append). collapseConsecutive and
-  // appendNoOverlap remain as belt-and-suspenders for residual duplicates.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function createRecognition(SR: any) {
-    const recognition = new SR();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    // Tracks finalized (and deduped) text from THIS session only. onend folds
-    // it into finalTranscriptRef before restarting.
-    let sessionFinals = '';
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (event: any) => {
-      let resolvedFinals = '';
-      let resolvedInterim = '';
-      for (let i = 0; i < event.results.length; i++) {
-        const r = event.results[i];
-        const transcript: string = r[0].transcript;
-        if (r.isFinal) {
-          resolvedFinals = mergeChunk(resolvedFinals, transcript);
-        } else {
-          resolvedInterim = mergeChunk(resolvedInterim, transcript);
-        }
-      }
-      sessionFinals = collapseConsecutive(resolvedFinals);
-      setInput(composeDisplay(finalTranscriptRef.current, sessionFinals, resolvedInterim));
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onerror = (event: any) => {
-      const code: string = event?.error ?? 'unknown';
-      console.error('Speech recognition error:', code, event);
-      if (code === 'not-allowed' || code === 'service-not-allowed') {
-        keepListeningRef.current = false;
-        setMicError('Microphone access is blocked. Check your browser permissions.');
-        window.setTimeout(() => setMicError(null), 6000);
-      } else if (code === 'audio-capture') {
-        keepListeningRef.current = false;
-        setMicError('No microphone found on this device.');
-        window.setTimeout(() => setMicError(null), 6000);
-      } else if (code === 'network') {
-        keepListeningRef.current = false;
-        setMicError('Voice input network error. Check your connection and try again.');
-        window.setTimeout(() => setMicError(null), 6000);
-      } else if (code === 'no-speech' || code === 'aborted') {
-        // Transient — let onend auto-restart, no toast.
-      } else {
-        // Surface anything else so browser-specific failures (e.g. Edge using
-        // a different recognition backend) become diagnosable instead of silent.
-        setMicError(`Voice input error: ${code}. Tap the mic to try again.`);
-        window.setTimeout(() => setMicError(null), 8000);
-      }
-    };
-
-    recognition.onend = () => {
-      // NEVER auto-restart on silence. Each restart triggers Chrome's
-      // acquire/release tone, which is the "bell every few seconds on
-      // pause" the user has been hearing. Recognition ends naturally when
-      // the user pauses; the captured text stays in the input. To dictate
-      // more, the user taps the mic again.
-      finalTranscriptRef.current = appendNoOverlap(finalTranscriptRef.current, sessionFinals);
-      sessionFinals = '';
-      keepListeningRef.current = false;
-      setIsRecording(false);
-    };
-
-    return recognition;
-  }
-
-  function toggleMic() {
-    if (typeof window === 'undefined') return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-    const SR = w.SpeechRecognition ?? w.webkitSpeechRecognition;
-    if (!SR) return;
-
-    setMicError(null);
-
-    if (isRecording) {
-      keepListeningRef.current = false;
+  function stopRecordingAndTranscribe() {
+    const rec = mediaRecorderRef.current;
+    if (!rec) return;
+    if (rec.state !== 'inactive') {
       try {
-        recognitionRef.current?.stop();
+        rec.stop();
       } catch {
         // ignore
       }
-      setIsRecording(false);
+    }
+    // The actual upload happens in MediaRecorder.onstop below.
+  }
+
+  async function toggleMic() {
+    if (typeof window === 'undefined') return;
+    setMicError(null);
+
+    if (isRecording) {
+      // User tapped mic to stop. End recording; onstop will upload + transcribe.
+      stopRecordingAndTranscribe();
       return;
     }
 
-    finalTranscriptRef.current = '';
-    keepListeningRef.current = true;
-    const recognition = createRecognition(SR);
-    recognitionRef.current = recognition;
+    if (!navigator?.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+      setMicError('Voice input is not supported in this browser.');
+      window.setTimeout(() => setMicError(null), 6000);
+      return;
+    }
+
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.error('Failed to acquire microphone:', err);
+      setMicError('Microphone access is blocked. Check your browser permissions.');
+      window.setTimeout(() => setMicError(null), 6000);
+      return;
+    }
+    micStreamRef.current = stream;
+    recordedChunksRef.current = [];
+
+    // Use whichever audio container the browser supports. webm/opus is the
+    // baseline on Chrome and the back-end Whisper call accepts it; Safari
+    // tends to produce mp4. Either is fine for Whisper.
+    let recorder: MediaRecorder;
+    try {
+      const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', ''];
+      let mimeType = '';
+      for (const c of candidates) {
+        if (c === '' || (typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported(c))) {
+          mimeType = c;
+          break;
+        }
+      }
+      recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    } catch (err) {
+      console.error('Failed to start MediaRecorder:', err);
+      stream.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+      setMicError('Could not start voice input. Try again.');
+      window.setTimeout(() => setMicError(null), 6000);
+      return;
+    }
+
+    recorder.ondataavailable = (e: BlobEvent) => {
+      if (e.data && e.data.size > 0) recordedChunksRef.current.push(e.data);
+    };
+
+    recorder.onstop = async () => {
+      // Release the mic stream first so the OS indicator goes away even
+      // before transcription returns.
+      try {
+        micStreamRef.current?.getTracks().forEach((t) => t.stop());
+      } catch {
+        // ignore
+      }
+      micStreamRef.current = null;
+
+      const chunks = recordedChunksRef.current;
+      recordedChunksRef.current = [];
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+      if (blob.size === 0) {
+        setIsRecording(false);
+        return;
+      }
+
+      setIsRecording(false);
+      setIsTranscribing(true);
+      try {
+        const filename = (recorder.mimeType || '').includes('mp4') ? 'recording.mp4' : 'recording.webm';
+        const fd = new FormData();
+        fd.append('audio', blob, filename);
+        const res = await fetch('/api/transcribe', { method: 'POST', body: fd });
+        if (!res.ok) {
+          const detail = await res.text().catch(() => '');
+          throw new Error(detail || `HTTP ${res.status}`);
+        }
+        const json = (await res.json()) as { text?: string };
+        const transcript = (json.text ?? '').trim();
+        if (transcript) {
+          setInput((prev) => {
+            const sep = prev && !/\s$/.test(prev) ? ' ' : '';
+            return prev + sep + transcript;
+          });
+        }
+      } catch (err) {
+        console.error('Transcription failed:', err);
+        setMicError('Voice input could not be transcribed. Try again.');
+        window.setTimeout(() => setMicError(null), 6000);
+      } finally {
+        setIsTranscribing(false);
+      }
+    };
+
+    mediaRecorderRef.current = recorder;
 
     try {
-      recognition.start();
+      recorder.start();
       setIsRecording(true);
     } catch (err) {
-      console.error('Failed to start recognition:', err);
-      keepListeningRef.current = false;
+      console.error('Failed to start MediaRecorder:', err);
+      stream.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+      mediaRecorderRef.current = null;
       setMicError('Could not start voice input. Try again.');
       window.setTimeout(() => setMicError(null), 6000);
     }
@@ -583,13 +593,15 @@ export default function Chat({
           <button
             type="button"
             onClick={toggleMic}
-            disabled={isLoading}
-            aria-label={isRecording ? 'Stop voice input' : 'Start voice input'}
+            disabled={isLoading || isTranscribing}
+            aria-label={isRecording ? 'Stop voice input' : isTranscribing ? 'Transcribing' : 'Start voice input'}
             aria-pressed={isRecording}
             className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md transition disabled:opacity-50 ${
               isRecording
                 ? 'text-red-400 bg-red-400/15 animate-pulse'
-                : 'text-[color:var(--accent-ink)] hover:bg-[var(--accent-soft)]'
+                : isTranscribing
+                  ? 'text-[color:var(--accent-ink)] opacity-60'
+                  : 'text-[color:var(--accent-ink)] hover:bg-[var(--accent-soft)]'
             }`}
           >
             <svg

@@ -27,78 +27,133 @@ export function AdminCommandBar({ base }: { base: string }) {
     setFeedback(null);
   }, [pathname]);
 
-  // Voice input
+  // Voice input via MediaRecorder + Whisper (no browser-played bells).
   const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
-  const recognitionRef = useRef<any>(null);
-  const userStoppedRef = useRef(false);
-  const finalTranscriptRef = useRef('');
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const micStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Ctor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    setSpeechSupported(Boolean(Ctor));
+    setSpeechSupported(
+      typeof navigator !== 'undefined' &&
+        !!navigator.mediaDevices?.getUserMedia &&
+        typeof MediaRecorder !== 'undefined',
+    );
+    return () => {
+      try {
+        mediaRecorderRef.current?.stop();
+      } catch {
+        // ignore
+      }
+      try {
+        micStreamRef.current?.getTracks().forEach((t) => t.stop());
+      } catch {
+        // ignore
+      }
+    };
   }, []);
 
-  function startListening() {
+  async function startListening() {
     if (typeof window === 'undefined') return;
-    const Ctor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!Ctor) return;
-    const recognizer = new Ctor();
-    recognizer.lang = 'en-US';
-    recognizer.continuous = true;
-    recognizer.interimResults = true;
-    userStoppedRef.current = false;
-    finalTranscriptRef.current = input.trim();
+    if (!navigator?.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') return;
 
-    recognizer.onresult = (event: any) => {
-      let interim = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        const transcript = result[0].transcript;
-        if (result.isFinal) {
-          finalTranscriptRef.current = (finalTranscriptRef.current + ' ' + transcript).trim();
-        } else {
-          interim = transcript;
-        }
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.warn('command bar mic access blocked', err);
+      return;
+    }
+    micStreamRef.current = stream;
+    recordedChunksRef.current = [];
+
+    const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', ''];
+    let mimeType = '';
+    for (const c of candidates) {
+      if (c === '' || (typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported(c))) {
+        mimeType = c;
+        break;
       }
-      const combined = (finalTranscriptRef.current + ' ' + interim).trim();
-      setInput(combined);
+    }
+
+    let recorder: MediaRecorder;
+    try {
+      recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    } catch (err) {
+      console.warn('command bar MediaRecorder init failed', err);
+      stream.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+      return;
+    }
+
+    recorder.ondataavailable = (e: BlobEvent) => {
+      if (e.data && e.data.size > 0) recordedChunksRef.current.push(e.data);
     };
-    recognizer.onerror = (event: any) => {
-      if (event.error === 'no-speech') {
-        // ignore, restart will handle
+
+    recorder.onstop = async () => {
+      try {
+        micStreamRef.current?.getTracks().forEach((t) => t.stop());
+      } catch {
+        // ignore
+      }
+      micStreamRef.current = null;
+
+      const chunks = recordedChunksRef.current;
+      recordedChunksRef.current = [];
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+      if (blob.size === 0) {
+        setIsRecording(false);
         return;
       }
-      console.warn('command bar speech error', event.error);
-    };
-    recognizer.onend = () => {
-      // Never auto-restart on silence; that triggers Chrome's bell on each
-      // restart. Recognition ends naturally; user re-taps mic to dictate more.
-      userStoppedRef.current = true;
+
       setIsRecording(false);
+      setIsTranscribing(true);
+      try {
+        const filename = (recorder.mimeType || '').includes('mp4') ? 'recording.mp4' : 'recording.webm';
+        const fd = new FormData();
+        fd.append('audio', blob, filename);
+        const res = await fetch('/api/transcribe', { method: 'POST', body: fd });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = (await res.json()) as { text?: string };
+        const transcript = (json.text ?? '').trim();
+        if (transcript) {
+          setInput((prev) => {
+            const sep = prev && !/\s$/.test(prev) ? ' ' : '';
+            return prev + sep + transcript;
+          });
+        }
+      } catch (err) {
+        console.warn('command bar transcription failed', err);
+      } finally {
+        setIsTranscribing(false);
+      }
     };
 
-    recognitionRef.current = recognizer;
+    mediaRecorderRef.current = recorder;
     try {
-      recognizer.start();
+      recorder.start();
       setIsRecording(true);
     } catch {
-      /* already started */
+      stream.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+      mediaRecorderRef.current = null;
     }
   }
 
   function stopListening() {
-    userStoppedRef.current = true;
-    if (recognitionRef.current) {
+    const rec = mediaRecorderRef.current;
+    if (rec && rec.state !== 'inactive') {
       try {
-        recognitionRef.current.stop();
+        rec.stop();
       } catch {
         /* ignore */
       }
+    } else {
+      setIsRecording(false);
     }
-    setIsRecording(false);
   }
 
   async function submit(event: React.FormEvent) {
@@ -271,9 +326,10 @@ export function AdminCommandBar({ base }: { base: string }) {
             <button
               type="button"
               onClick={isRecording ? stopListening : startListening}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5"
+              disabled={isTranscribing}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 disabled:opacity-50"
               style={{ color: isRecording ? 'var(--admin-danger)' : 'var(--admin-fg-muted)' }}
-              aria-label={isRecording ? 'Stop recording' : 'Start voice input'}
+              aria-label={isRecording ? 'Stop recording' : isTranscribing ? 'Transcribing' : 'Start voice input'}
               title={isRecording ? 'Stop' : 'Voice input'}
             >
               {isRecording ? (
