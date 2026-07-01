@@ -1193,3 +1193,16 @@ them.
   text says "Output," chat responds with the frustrating-one /
   no-no-summer / quick-question pattern).
 
+### Added HVAC as a tile on `demos.output.systems`
+
+Appended the HVAC entry to the `ANALYTICS_DEMOS` env var on the
+`demo-analytics` Vercel project (10 demos in the JSON now, up from
+9). Redeployed demo-analytics and re-aliased to both
+`demos.output.systems` and `demo-analytics.output.systems`.
+
+HVAC tile now appears alongside the other demos in both Demos mode
+(clicking opens `hvac.output.systems` in a new tab) and Analytics
+mode (navigates to `/conversations` with the hvac demo selected).
+The analytics view will populate with real transcripts and lead
+counts once the operator applies `supabase/hvac/APPLY_THIS.sql`.
+
