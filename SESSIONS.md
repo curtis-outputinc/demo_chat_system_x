@@ -1206,3 +1206,25 @@ mode (navigates to `/conversations` with the hvac demo selected).
 The analytics view will populate with real transcripts and lead
 counts once the operator applies `supabase/hvac/APPLY_THIS.sql`.
 
+### HVAC Supabase migrations applied - chat fully live
+
+Operator ran `supabase/hvac/APPLY_THIS.sql` in the Supabase SQL
+editor for project `hqhvsgkxvlelmxtvpguv`. Tenant row confirmed
+via REST (id `895ea7d1-853d-4b1e-b1bb-9212126d86cb`, slug `hvac`,
+domain `hvac.output.systems`).
+
+Live smoke test on `hvac.output.systems` with the target scenario
+"my vents aren't blowing cold air" now returns the intended reply 1
+shape:
+
+> That's a frustrating one, especially on a hot day. This is
+> something our team solves for customers every week. Quick
+> question: when you turn the AC on from the thermostat, can you
+> hear the unit outside your house humming or making any kind of
+> sound?
+
+Empathy + confidence + one plain-English question. No jargon. Chat
+is persisting conversations to Supabase, so the analytics view on
+`demos.output.systems` will now show real transcripts and leads
+for the HVAC tile.
+
