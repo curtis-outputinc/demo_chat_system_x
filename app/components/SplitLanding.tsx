@@ -133,15 +133,20 @@ export default function SplitLanding({ config }: { config: PublicVerticalConfig 
       <aside className="hidden md:block bg-black md:sticky md:top-0 md:self-start md:h-screen md:w-1/3">
         <div className="relative h-full w-full">
           {config.heroImage ? (
-            <Image
-              src={config.heroImage}
-              alt=""
-              fill
-              priority
-              quality={90}
-              sizes="33vw"
-              className="object-cover md:[clip-path:polygon(50%_0,100%_0,100%_100%,0_100%,0_50%)]"
-            />
+            <>
+              <Image
+                src={config.heroImage}
+                alt=""
+                fill
+                priority
+                quality={90}
+                sizes="33vw"
+                className="object-cover md:[clip-path:polygon(50%_0,100%_0,100%_100%,0_100%,0_50%)]"
+              />
+              {/* Modest ~15% dark overlay so bright hero images sit comfortably
+                  next to the dark chat panel. */}
+              <div className="absolute inset-0 bg-black/15 pointer-events-none md:[clip-path:polygon(50%_0,100%_0,100%_100%,0_100%,0_50%)]" />
+            </>
           ) : null}
         </div>
       </aside>

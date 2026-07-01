@@ -1,7 +1,7 @@
 # Homeowner FAQ
 
 Everything a homeowner is likely to ask about HVAC. Answers are
-plain-language and reflect ABC HVAC's approach. Questions are
+plain-language and reflect ABC Comfort Heating and Air Conditioning's approach. Questions are
 grouped by topic. Duplicates from multiple source lists have been
 merged, and 50 additional questions have been added at the end.
 

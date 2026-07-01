@@ -1,6 +1,6 @@
 # Commercial HVAC services
 
-ABC HVAC serves commercial and light industrial clients: offices,
+ABC Comfort Heating and Air Conditioning serves commercial and light industrial clients: offices,
 retail, restaurants, warehouses, medical clinics, apartment
 buildings, schools, gyms, and manufacturing facilities. We handle
 new equipment installs, repairs, replacements, and ongoing

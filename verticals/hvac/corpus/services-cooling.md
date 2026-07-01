@@ -1,6 +1,6 @@
 # Cooling services
 
-ABC HVAC repairs, maintains, and installs air conditioning and
+ABC Comfort Heating and Air Conditioning repairs, maintains, and installs air conditioning and
 cooling equipment for homes and businesses. What we handle:
 
 ## Central air conditioners

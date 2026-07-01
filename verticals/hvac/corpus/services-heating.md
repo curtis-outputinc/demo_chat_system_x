@@ -1,6 +1,6 @@
 # Heating services
 
-ABC HVAC repairs, maintains, and installs the full range of
+ABC Comfort Heating and Air Conditioning repairs, maintains, and installs the full range of
 residential and commercial heating equipment. Below is what we
 handle, in plain language.
 

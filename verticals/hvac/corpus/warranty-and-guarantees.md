@@ -14,7 +14,7 @@ parts warranty period usually gets cut roughly in half. We register
 every system we install on the customer's behalf; the customer
 gets a copy of the registration confirmation.
 
-## ABC HVAC labor warranty (on new installs)
+## ABC Comfort Heating and Air Conditioning labor warranty (on new installs)
 
 Every new equipment installation comes with a 1-year labor
 warranty by default. If something we installed fails during that
@@ -25,7 +25,7 @@ for 5 or 10 years. These cover the technician's time on any
 warranty repair through the extended period. Recommended for
 customers who want fully budgeted comfort.
 
-## ABC HVAC labor warranty (on repairs)
+## ABC Comfort Heating and Air Conditioning labor warranty (on repairs)
 
 Every repair is warrantied for 90 days on the same fault. If the
 part we replaced fails again on the same issue within 90 days, we
@@ -70,7 +70,7 @@ and reset the scope of work with the customer before doing more.
 
 ## How to file a warranty claim
 
-Call the office line or email info@abchvac.com. Give us the address
+Call the office line or email info@abccomfort.com. Give us the address
 and a description of the problem. If the equipment is under our
 labor warranty, we schedule the repair at no labor cost. If it is
 under manufacturer parts warranty only, we handle the paperwork

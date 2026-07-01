@@ -1,6 +1,6 @@
 # 24/7 emergency service
 
-ABC HVAC's emergency line answers 24 hours a day, 7 days a week
+ABC Comfort Heating and Air Conditioning's emergency line answers 24 hours a day, 7 days a week
 including holidays. Call **(123) 555-5555** any time.
 
 ## What counts as an emergency

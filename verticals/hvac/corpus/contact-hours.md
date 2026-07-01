@@ -1,6 +1,6 @@
 # Contact and hours
 
-Callers who want to reach ABC HVAC have three options: phone,
+Callers who want to reach ABC Comfort Heating and Air Conditioning have three options: phone,
 email, or booking a service call directly through this chat.
 
 ## Phone
@@ -12,7 +12,7 @@ service calls, quotes, and general questions.
 
 ## Email
 
-**info@abchvac.com** reaches our office. We reply the same day
+**info@abccomfort.com** reaches our office. We reply the same day
 during business hours and the next business day if you write us
 in the evening or on the weekend. For an active emergency, call
 the phone line; email is not the fastest path.

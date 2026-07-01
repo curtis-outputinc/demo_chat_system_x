@@ -1,14 +1,14 @@
 {
-  "brandName": "HVAC Demo",
+  "brandName": "ABC Comfort Heating and Air Conditioning",
   "trade": "HVAC contractor",
   "productName": "intelligent website chat system",
   "accentColor": "#1ae0cb",
   "contactFlow": "book-and-share",
-  "layout": "centered",
+  "layout": "split",
   "theme": "dark",
-  "heroImage": "",
-  "logoPath": "/logo.png",
-  "logoDark": "/logo_white.png",
+  "heroImage": "/images/hvac/technician-comfort.png",
+  "logoPath": "/logo-light.png",
+  "logoDark": "/logo.png",
   "siteUrl": "https://hvac.output.systems",
   "bookingUrl": "https://cal.com/output-systems",
   "privacyUrl": "",
@@ -16,8 +16,8 @@
   "modes": {
     "client": {
       "label": "Customer side",
-      "blurb": "Ask what a homeowner or building manager would ask",
-      "greeting": "Hi, glad you stopped by. We handle heating, cooling, and ventilation for homes and small commercial across Canada and the US. What is going on with your system today?",
+      "blurb": "Ask what a homeowner or business would ask",
+      "greeting": "Hi, glad you stopped by. We handle heating, cooling, and ventilation for homes and small commercial across the region. What is going on with your system today?",
       "chips": [
         "My AC stopped cooling",
         "No heat and it is freezing outside",
@@ -28,7 +28,7 @@
     "professional": {
       "label": "HVAC side",
       "blurb": "See how this would work on your own website",
-      "greeting": "Hey, take a look around. This is a working intelligent chat system built for HVAC shops. It handles inbound from your website around the clock, screens the timewasters, books real service calls, and flags no-heat and gas-smell emergencies so they reach your team fast. Ask me how any piece of that works.",
+      "greeting": "Hey, take a look around. This is a working intelligent chat system built for HVAC shops. It handles inbound around the clock, screens the timewasters, books real service calls, and flags no-heat and gas-smell emergencies fast. Ask me how any piece of that works.",
       "chips": [
         "How does it handle no-heat emergencies?",
         "Can it screen tire-kickers before dispatch?",

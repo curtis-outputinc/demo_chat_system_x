@@ -1,6 +1,6 @@
-# About ABC HVAC
+# About ABC Comfort Heating and Air Conditioning
 
-ABC HVAC is a full-service heating, cooling, and ventilation company
+ABC Comfort Heating and Air Conditioning is a full-service heating, cooling, and ventilation company
 serving homeowners and businesses. We have been in business for over
 15 years and are a fully licensed, bonded, and insured Texas HVAC
 contractor. Our technicians are trained on furnaces, air
@@ -39,7 +39,7 @@ clinics, schools, apartment buildings, and industrial facilities.
 We work with new construction, remodels, tenant improvements, and
 straight equipment replacements.
 
-## What makes ABC HVAC different
+## What makes ABC Comfort Heating and Air Conditioning different
 
 Fifteen-plus years handling everything from single-furnace repairs
 to multi-unit rooftop replacements. All work is performed by
@@ -50,7 +50,7 @@ equipment a customer does not need.
 
 ## Company facts (quick reference)
 
-- Company name: ABC HVAC
+- Company name: ABC Comfort Heating and Air Conditioning
 - Trade: Heating, Ventilation, and Air Conditioning contractor
 - Licensing: Fully licensed, bonded, and insured Texas HVAC
   contractor
