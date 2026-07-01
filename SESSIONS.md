@@ -1070,3 +1070,126 @@ To restore the Web Speech API approach (accepting the mobile bell):
    SpeechRecognition implementation (search git history for the
    `recognitionRef` removal commit).
 
+## 2026-07-01 — HVAC vertical: full build, live, generic, aggressive funnel
+
+Live at `hvac.output.systems`. Vercel project `demo-hvac`. Supabase
+project `hqhvsgkxvlelmxtvpguv` (the "ABC Comfort" demo project;
+schema still needs to be applied by the operator via
+`supabase/hvac/APPLY_THIS.sql`).
+
+### Scaffold + first corpus drop
+
+Scaffolded a dedicated HVAC vertical alongside the existing
+multi-trade `contractor` vertical. Both stay live: `contractor` is
+for prospects who run all three mechanicals under one brand,
+`hvac` is for HVAC-only shops.
+
+- `verticals/hvac/` : config.json, behaviors.md, SETUP.md, empty
+  corpus with `_README.md`.
+- `supabase/hvac/seed-tenant.sql` + README for the tenant seed.
+- `.env.hvac.local` template at repo root.
+
+Then Gemini + ChatGPT sourced ~400 residential and commercial
+Q&A were merged, deduplicated, and augmented with 50 new
+residential questions. 13 corpus files total, ~2,330 lines. Files:
+
+- about-and-scope.md, contact-hours.md
+- services-heating.md, services-cooling.md,
+  services-ventilation-and-iaq.md, services-commercial.md
+- pricing-and-financing.md, maintenance-plans.md,
+  emergency-service.md, warranty-and-guarantees.md
+- faq-homeowner.md (~250 Q&A), faq-commercial.md (~100 Q&A)
+- for-hvac-shops.md (professional side)
+
+### Company: ABC Comfort Heating and Air Conditioning
+
+Initially "ABC HVAC" (short form the user wanted). After the hero
+image was added, the image itself carried "COMFORT" branding, so
+the company was renamed to `ABC Comfort Heating and Air
+Conditioning` everywhere. Email domain moved from `abchvac.com` to
+`abccomfort.com`. Phone `(123) 555-5555`, rate `$120/hr` standard
+and `$180/hr` after-hours, 24/7 emergency line, fully licensed
+mechanical contractor.
+
+### Technical field guide + service practices corpus
+
+Added two more corpus files after the initial FAQ drop:
+
+- `technical-field-guide.md` (8 sections): thermodynamics,
+  high-efficiency furnace mechanicals + sequence of operation,
+  refrigeration cycle + heat pumps + A2L refrigerants (2026
+  landscape), hydronic heating + water heaters, airflow / duct /
+  IAQ, seasonal PM checklists, refrigerant diagnostic matrix,
+  electrical controls + BAS.
+- `service-practices-and-troubleshooting.md`: field-oriented
+  diagnostic mindset, root-cause thinking, common customer
+  complaints, filter reality, furnace safety, HE furnace quirks,
+  AC diagnostics, heat pump reality, boiler reality, water heater
+  complaints, HRV / ERV, IAQ drivers.
+
+### Hero image + split layout
+
+Copied a photo of a technician working on a Carrier furnace (with
+"COMFORT Heating & Cooling" visible on the wall sign and tool bag)
+to `public/images/hvac/technician-comfort.png`. Config switched to
+`layout: split` with the image as the hero.
+
+Added a modest ~15% dark overlay on the desktop hero image in
+`SplitLanding.tsx` so bright hero images sit comfortably next to
+the dark chat panel. Affects every vertical using
+`layout: split` (deliberate; the previous behavior had no overlay).
+
+### Post-review refinements
+
+User feedback on the initial deploy prompted five follow-up fixes:
+
+1. **De-Texas-ify**: two "Texas" references stripped from
+   `about-and-scope.md`. Behaviors rewritten to say "across the
+   region" instead of "Canada and the US." Fully generic now.
+2. **Accelerated funnel**: contact capture now targets reply 3 max
+   instead of the default engine's reply 4. Reply 1 = empathy +
+   confidence statement + one plain-English question. Reply 2 =
+   name + phone ask. Reply 3 = confirmation + SUBMIT_LEAD marker.
+3. **Multi-trade handling**: ABC Comfort now handles HVAC +
+   plumbing + electrical. If a visitor asks for a plumbing
+   recommendation, the bot recommends ABC Comfort itself (demo
+   hack so we do not invent fake partners).
+4. **Plain-English requirement**: explicit "no jargon at the
+   customer" section added. "Condenser" → "the unit outside your
+   house," "refrigerant" → "the coolant," "evaporator coil" →
+   "the indoor part." Full worked example for the vent-not-cold
+   scenario.
+5. **UI polish**: added `siteTitle` optional field to VerticalConfig
+   (falls back to brandName when not set). HVAC sets it to
+   "Output" so the browser tab title and visible header label
+   read "Output" instead of the long demo brand name. Logo
+   `<Image>` dimensions changed from 140x42 to 150x50 to match
+   the actual logo.png (1500x500, aspect 3:1); fixes the
+   stretched appearance.
+
+### Deployment
+
+Vercel project `demo-hvac` created (framework auto-detected via
+fresh `vercel deploy`; earlier attempt with `vercel project add`
+was aborted because that path sets framework=Other and produces a
+broken 404 site). Envs set: VERTICAL, SUPABASE_URL,
+SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY, NEXT_PUBLIC_SITE_URL.
+Custom domain `hvac.output.systems` attached and aliased.
+
+The shell / logo changes were pushed to all 10 demo Vercel
+projects (demo-hvac, demo-prequalifier-rs, demo-prequalifier,
+demo-contractor, demo-insurancebroker, demo-mortgagebroker,
+demo-financialadvisor, demo-realtor, demo-injurylaw,
+demo-immigrationlaw), custom domains re-aliased on the ones with
+them.
+
+### Still needed from the operator
+
+- Apply `supabase/hvac/APPLY_THIS.sql` (concatenated base
+  migrations + tenant seed) via the Supabase SQL editor at
+  https://supabase.com/dashboard/project/hqhvsgkxvlelmxtvpguv/sql/new
+  before the chat can persist conversations or leads.
+- Verify `hvac.output.systems` renders correctly (image, header
+  text says "Output," chat responds with the frustrating-one /
+  no-no-summer / quick-question pattern).
+
