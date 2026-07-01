@@ -12,7 +12,7 @@ const inter = Inter({
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getPublicConfig();
-  const title = `${config.brandName}`;
+  const title = config.siteTitle || config.brandName;
   const description = `Chat with ${config.brandName}. Ask a question or get help, any time.`;
 
   return {

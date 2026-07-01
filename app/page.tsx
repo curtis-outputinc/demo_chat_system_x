@@ -17,14 +17,14 @@ export default async function HomePage() {
       <header className="flex items-center gap-3 border-b border-white/10 px-6 sm:px-12 py-5">
         <Image
           src={config.logoPath}
-          alt={config.brandName}
-          width={140}
-          height={42}
+          alt={config.siteTitle || config.brandName}
+          width={150}
+          height={50}
           priority
           className="h-8 w-auto"
         />
         <span className="text-base font-semibold tracking-tight text-white">
-          {config.brandName}
+          {config.siteTitle || config.brandName}
         </span>
       </header>
       <Chat config={config} theme={config.theme} />

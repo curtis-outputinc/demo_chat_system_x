@@ -96,14 +96,14 @@ export default function SplitLanding({ config }: { config: PublicVerticalConfig 
             <div className="flex flex-col gap-1 min-w-0">
               <Image
                 src={config.logoDark}
-                alt={config.brandName}
-                width={140}
-                height={42}
+                alt={config.siteTitle || config.brandName}
+                width={150}
+                height={50}
                 priority
                 className="h-8 w-auto shrink-0"
               />
               <span className="text-base font-semibold tracking-tight text-white truncate min-w-0">
-                {config.brandName}
+                {config.siteTitle || config.brandName}
               </span>
             </div>
             <div className="ml-auto flex items-center gap-2 shrink-0">
@@ -158,14 +158,14 @@ export default function SplitLanding({ config }: { config: PublicVerticalConfig 
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 min-w-0">
             <Image
               src={logoSrc}
-              alt={config.brandName}
-              width={140}
-              height={42}
+              alt={config.siteTitle || config.brandName}
+              width={150}
+              height={50}
               priority
               className="h-8 sm:h-10 w-auto shrink-0"
             />
             <span className={`text-base sm:text-xl font-semibold tracking-tight ${titleClass} truncate min-w-0`}>
-              {config.brandName}
+              {config.siteTitle || config.brandName}
             </span>
           </div>
           <div className="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">

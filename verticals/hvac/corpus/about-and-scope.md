@@ -2,7 +2,7 @@
 
 ABC Comfort Heating and Air Conditioning is a full-service heating, cooling, and ventilation company
 serving homeowners and businesses. We have been in business for over
-15 years and are a fully licensed, bonded, and insured Texas HVAC
+15 years and are a fully licensed, bonded, and insured HVAC
 contractor. Our technicians are trained on furnaces, air
 conditioners, heat pumps, ductless mini-splits, boilers, rooftop
 units, chillers, and commercial ventilation systems.
@@ -52,7 +52,7 @@ equipment a customer does not need.
 
 - Company name: ABC Comfort Heating and Air Conditioning
 - Trade: Heating, Ventilation, and Air Conditioning contractor
-- Licensing: Fully licensed, bonded, and insured Texas HVAC
+- Licensing: Fully licensed, bonded, and insured HVAC
   contractor
 - Years in business: 15+
 - Emergency service: available 24 hours a day, 7 days a week

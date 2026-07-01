@@ -40,6 +40,13 @@ export interface VerticalConfig {
   vertical: string;
   /** The demo business name shown to visitors, e.g. "Riverside Injury Law". */
   brandName: string;
+  /**
+   * Optional override for the site's visible title (browser tab and the
+   * text next to the logo in the header). When omitted, both fall back to
+   * brandName. Useful when the underlying demo brand is verbose and we want
+   * a shorter parent brand label at the top instead.
+   */
+  siteTitle?: string;
   /** The trade/profession, lowercased, e.g. "injury lawyer". Used in copy. */
   trade: string;
   /** What WE call the product when the prospect explores in professional mode. */
